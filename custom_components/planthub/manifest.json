@@ -1,0 +1,12 @@
+{
+  "domain": "planthub",
+  "name": "PlantHub",
+  "documentation": "https://github.com/yourusername/planthub",
+  "dependencies": [],
+  "codeowners": ["@yourusername"],
+  "requirements": [],
+  "version": "1.0.0",
+  "config_flow": true,
+  "iot_class": "local_polling",
+  "integration_type": "device"
+}

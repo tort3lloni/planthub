@@ -1,0 +1,3 @@
+# PlantHub Integration Requirements
+# Diese Integration benötigt keine externen Python-Pakete
+# Alle Abhängigkeiten sind bereits in Home Assistant enthalten
