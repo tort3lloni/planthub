@@ -52,8 +52,13 @@ Eine moderne und benutzerfreundliche Home Assistant Integration für die Überwa
 
 1. Öffne dein Dashboard im Bearbeitungsmodus
 2. Klicke auf "+ Karte hinzufügen"
-3. Wähle "PlantHub" aus der Liste
+3. Wähle "PlantHub Card" aus der Liste der verfügbaren Karten
 4. Konfiguriere die Karte nach deinen Wünschen
+
+**Wichtig**: Die PlantHub-Karte sollte automatisch in der Liste der verfügbaren Karten erscheinen. Falls nicht, stelle sicher, dass:
+- Die Integration korrekt installiert ist
+- Home Assistant neu gestartet wurde
+- JavaScript-Integration aktiviert ist
 
 ## 🎨 Kartenkonfiguration
 
@@ -138,10 +143,10 @@ custom_components/planthub/
 ├── translations/       # Übersetzungen
 │   └── de.json
 └── frontend/          # Dashboardkarte
-    └── dist/
-        ├── planthub-card.js
-        ├── planthub-card.js.map
-        └── editor.js
+    ├── __init__.py
+    ├── planthub-card.js
+    ├── planthub-card.js.map
+    └── editor.js
 ```
 
 ### Anpassungen
@@ -149,8 +154,8 @@ custom_components/planthub/
 Die Integration kann einfach angepasst werden:
 
 1. **Neue Sensoren hinzufügen**: Bearbeite `sensor.py`
-2. **Kartenstyling ändern**: Bearbeite `planthub-card.js`
-3. **Editor erweitern**: Bearbeite `editor.js`
+2. **Kartenstyling ändern**: Bearbeite `frontend/planthub-card.js`
+3. **Editor erweitern**: Bearbeite `frontend/editor.js`
 4. **Übersetzungen hinzufügen**: Bearbeite `translations/de.json`
 
 ## 🐛 Fehlerbehebung
@@ -161,6 +166,7 @@ Die Integration kann einfach angepasst werden:
 - Stelle sicher, dass JavaScript-Integration aktiviert ist
 - Überprüfe die Browser-Konsole auf Fehler
 - Starte Home Assistant neu
+- Überprüfe, ob die Integration korrekt installiert ist
 
 **Sensoren zeigen keine Werte:**
 - Überprüfe die Integration in "Geräte & Dienste"
@@ -170,15 +176,22 @@ Die Integration kann einfach angepasst werden:
 **Visueller Editor funktioniert nicht:**
 - Überprüfe die Browser-Konsole auf JavaScript-Fehler
 - Stelle sicher, dass alle Frontend-Dateien korrekt installiert sind
+- Überprüfe die Verzeichnisstruktur
+
+**Karte erscheint nicht in der Liste:**
+- Starte Home Assistant neu nach der Installation
+- Überprüfe die Browser-Konsole auf Fehler
+- Stelle sicher, dass alle Frontend-Dateien im `frontend/` Verzeichnis liegen
 
 ## 📝 Changelog
 
-### Version 1.0.0
+### Version 0.0.1
 - Erste Veröffentlichung
 - Vollständige Integration mit Config Flow
 - Dashboardkarte mit visueller Bearbeitung
 - Deutsche Lokalisierung
 - HACS-Kompatibilität
+- Korrigierte Frontend-Integration
 
 ## 🤝 Beitragen
 
@@ -203,7 +216,7 @@ Dieses Projekt steht unter der MIT-Lizenz. Siehe LICENSE-Datei für Details.
 
 Bei Fragen oder Problemen:
 
-1. Überprüfe die [Issues](https://github.com/yourusername/planthub/issues)
+1. Überprüfe die [Issues](https://github.com/tort3lloni/planthub/issues)
 2. Erstelle ein neues Issue mit detaillierten Informationen
 3. Stelle sicher, dass du die neueste Version verwendest
 

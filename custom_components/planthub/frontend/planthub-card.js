@@ -290,4 +290,16 @@ export interface PlantHubCardConfig {
   compact?: boolean;
 }
 
+// Registriere die Karte global
 customElements.define('planthub-card', PlantHubCard);
+
+// Registriere die Karte bei Home Assistant
+if (window.customCards) {
+  window.customCards.push({
+    type: 'custom:planthub-card',
+    name: 'PlantHub Card',
+    description: 'Eine Karte zur Überwachung von Pflanzen',
+    preview: true,
+    documentationURL: 'https://github.com/tort3lloni/planthub',
+  });
+}

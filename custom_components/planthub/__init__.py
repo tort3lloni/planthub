@@ -15,6 +15,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN][entry.entry_id] = entry.data
 
+    # Lade Frontend-Komponenten
+    hass.http.register_static_path(
+        "/planthub",
+        hass.config.path("custom_components", "planthub", "frontend"),
+        cache_headers=False,
+    )
+
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
     return True
