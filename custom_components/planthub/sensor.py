@@ -15,6 +15,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
     PERCENTAGE,
     UnitOfTemperature,
+    UnitOfHumidity,
     UnitOfIlluminance,
 )
 from homeassistant.core import HomeAssistant
@@ -56,7 +57,7 @@ SENSOR_DESCRIPTIONS = {
         icon="mdi:water-percent",
         device_class=SensorDeviceClass.HUMIDITY,
         state_class=SensorStateClass.MEASUREMENT,
-        native_unit_of_measurement=PERCENTAGE,
+        native_unit_of_measurement=UnitOfHumidity.PERCENT,
         has_entity_name=True,
         entity_registry_visible_default=True,
     ),
@@ -76,7 +77,7 @@ SENSOR_DESCRIPTIONS = {
         icon="mdi:air-humidifier",
         device_class=SensorDeviceClass.HUMIDITY,
         state_class=SensorStateClass.MEASUREMENT,
-        native_unit_of_measurement=PERCENTAGE,
+        native_unit_of_measurement=UnitOfHumidity.PERCENT,
         has_entity_name=True,
         entity_registry_visible_default=True,
     ),
