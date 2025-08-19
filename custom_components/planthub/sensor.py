@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any, Dict, Optional
 
 from homeassistant.components.sensor import (
@@ -148,11 +148,15 @@ class PlantHubDataUpdateCoordinator(DataUpdateCoordinator):
 
     def __init__(self, hass: HomeAssistant, config_entry: ConfigEntry) -> None:
         """Initialize the coordinator."""
+        # Hole scan_interval aus der Konfiguration und konvertiere zu timedelta
+        scan_interval_seconds = config_entry.data.get("scan_interval", 300)
+        update_interval = timedelta(seconds=scan_interval_seconds)
+        
         super().__init__(
             hass,
             _LOGGER,
             name=f"{DOMAIN}_{config_entry.data.get('name', DEFAULT_NAME)}",
-            update_interval=config_entry.data.get("scan_interval", 300),
+            update_interval=update_interval,
         )
         
         self.config_entry = config_entry
