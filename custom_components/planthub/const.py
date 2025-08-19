@@ -6,11 +6,6 @@ from typing import Final
 # Domain
 DOMAIN: Final = "planthub"
 
-# Konfiguration
-CONF_API_TOKEN: Final = "api_token"
-CONF_NAME: Final = "name"
-CONF_PLANT_ID: Final = "plant_id"
-
 # Standardwerte
 DEFAULT_NAME: Final = "PlantHub"
 DEFAULT_SCAN_INTERVAL: Final = 300  # 5 Minuten

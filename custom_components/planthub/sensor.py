@@ -13,10 +13,9 @@ from homeassistant.components.sensor import (
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
-    CONF_NAME,
     PERCENTAGE,
-    TEMP_CELSIUS,
-    LIGHT_LUX,
+    UnitOfTemperature,
+    UnitOfIlluminance,
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -27,8 +26,6 @@ from homeassistant.helpers.update_coordinator import (
 )
 
 from .const import (
-    CONF_API_TOKEN,
-    CONF_PLANT_ID,
     DEFAULT_NAME,
     DOMAIN,
     STATUS_CRITICAL,
@@ -41,7 +38,7 @@ from .const import (
 
 _LOGGER = logging.getLogger(__name__)
 
-# Sensor-Beschreibungen für moderne Home Assistant Standards
+# Vollständige Sensor-Beschreibungen für moderne Home Assistant 2025 Standards
 SENSOR_DESCRIPTIONS = {
     "status": SensorEntityDescription(
         key="status",
@@ -49,7 +46,9 @@ SENSOR_DESCRIPTIONS = {
         icon="mdi:flower",
         device_class=None,
         state_class=None,
+        native_unit_of_measurement=None,
         has_entity_name=True,
+        entity_registry_visible_default=True,
     ),
     "soil_moisture": SensorEntityDescription(
         key="soil_moisture",
@@ -59,6 +58,7 @@ SENSOR_DESCRIPTIONS = {
         state_class=SensorStateClass.MEASUREMENT,
         native_unit_of_measurement=PERCENTAGE,
         has_entity_name=True,
+        entity_registry_visible_default=True,
     ),
     "air_temperature": SensorEntityDescription(
         key="air_temperature",
@@ -66,8 +66,9 @@ SENSOR_DESCRIPTIONS = {
         icon="mdi:thermometer",
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
-        native_unit_of_measurement=TEMP_CELSIUS,
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         has_entity_name=True,
+        entity_registry_visible_default=True,
     ),
     "air_humidity": SensorEntityDescription(
         key="air_humidity",
@@ -77,6 +78,7 @@ SENSOR_DESCRIPTIONS = {
         state_class=SensorStateClass.MEASUREMENT,
         native_unit_of_measurement=PERCENTAGE,
         has_entity_name=True,
+        entity_registry_visible_default=True,
     ),
     "light": SensorEntityDescription(
         key="light",
@@ -84,8 +86,9 @@ SENSOR_DESCRIPTIONS = {
         icon="mdi:brightness-6",
         device_class=SensorDeviceClass.ILLUMINANCE,
         state_class=SensorStateClass.MEASUREMENT,
-        native_unit_of_measurement=LIGHT_LUX,
+        native_unit_of_measurement=UnitOfIlluminance.LUX,
         has_entity_name=True,
+        entity_registry_visible_default=True,
     ),
     "plant_id": SensorEntityDescription(
         key="plant_id",
@@ -93,6 +96,7 @@ SENSOR_DESCRIPTIONS = {
         icon="mdi:identifier",
         device_class=None,
         state_class=None,
+        native_unit_of_measurement=None,
         has_entity_name=True,
         entity_registry_visible_default=False,
     ),
@@ -152,15 +156,15 @@ class PlantHubDataUpdateCoordinator(DataUpdateCoordinator):
         )
         
         self.config_entry = config_entry
-        self.api_token = config_entry.data[CONF_API_TOKEN]
-        self.plant_ids = config_entry.data.get(CONF_PLANT_ID, [])
+        self.api_token = config_entry.data["api_token"]
+        self.plant_ids = config_entry.data.get("plant_id", [])
         self._plant_names: Dict[str, str] = {}
         
         # Lade Pflanzennamen aus der Konfiguration
         for plant_config in config_entry.data.get("plants", []):
             if isinstance(plant_config, dict):
-                plant_id = plant_config.get(CONF_PLANT_ID)
-                plant_name = plant_config.get(CONF_NAME, plant_id)
+                plant_id = plant_config.get("plant_id")
+                plant_name = plant_config.get("name", plant_id)
                 if plant_id:
                     self._plant_names[plant_id] = plant_name
 
@@ -225,7 +229,7 @@ class BasePlantHubSensor(CoordinatorEntity, SensorEntity):
         self.plant_name = plant_name
         self.sensor_type = sensor_type
         
-        # Verwende moderne SensorEntityDescription
+        # Verwende vollständige SensorEntityDescription
         self.entity_description = SENSOR_DESCRIPTIONS[sensor_type]
         
         # Erstelle eindeutige Entity-ID

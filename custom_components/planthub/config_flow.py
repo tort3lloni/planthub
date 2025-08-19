@@ -11,9 +11,6 @@ from homeassistant.data_entry_flow import FlowResult
 from homeassistant.exceptions import HomeAssistantError
 
 from .const import (
-    CONF_API_TOKEN,
-    CONF_NAME,
-    CONF_PLANT_ID,
     DEFAULT_NAME,
     DOMAIN,
 )
@@ -40,8 +37,8 @@ class PlantHubConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 step_id="user",
                 data_schema=vol.Schema(
                     {
-                        vol.Required(CONF_NAME, default=DEFAULT_NAME): str,
-                        vol.Required(CONF_API_TOKEN): str,
+                        vol.Required("name", default=DEFAULT_NAME): str,
+                        vol.Required("api_token"): str,
                     }
                 ),
                 description_placeholders={
@@ -51,20 +48,20 @@ class PlantHubConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         # Validiere den API-Token
         try:
-            await self._validate_token(user_input[CONF_API_TOKEN])
+            await self._validate_token(user_input["api_token"])
         except Exception as ex:
             _LOGGER.error("Token-Validierung fehlgeschlagen: %s", ex)
             return self.async_show_form(
                 step_id="user",
                 data_schema=vol.Schema(
                     {
-                        vol.Required(CONF_NAME, default=user_input[CONF_NAME]): str,
-                        vol.Required(CONF_API_TOKEN): str,
+                        vol.Required("name", default=user_input["name"]): str,
+                        vol.Required("api_token"): str,
                     }
                 ),
                 errors={"base": "invalid_token"},
                 description_placeholders={
-                    "name": user_input[CONF_NAME],
+                    "name": user_input["name"],
                 },
             )
 
@@ -83,19 +80,19 @@ class PlantHubConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 step_id="add_plants",
                 data_schema=vol.Schema(
                     {
-                        vol.Required(CONF_PLANT_ID): str,
-                        vol.Optional(CONF_NAME): str,
+                        vol.Required("plant_id"): str,
+                        vol.Optional("name"): str,
                     }
                 ),
                 description_placeholders={
-                    "name": self._config_data[CONF_NAME],
+                    "name": self._config_data["name"],
                 },
             )
 
         # Füge die Pflanze zur Konfiguration hinzu
         plant_config = {
-            CONF_PLANT_ID: user_input[CONF_PLANT_ID],
-            CONF_NAME: user_input.get(CONF_NAME, user_input[CONF_PLANT_ID]),
+            "plant_id": user_input["plant_id"],
+            "name": user_input.get("name", user_input["plant_id"]),
         }
 
         if "plants" not in self._config_data:
@@ -112,8 +109,8 @@ class PlantHubConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 }
             ),
             description_placeholders={
-                "plant_name": plant_config[CONF_NAME],
-                "plant_id": plant_config[CONF_PLANT_ID],
+                "plant_name": plant_config["name"],
+                "plant_id": plant_config["plant_id"],
                 "total_plants": len(self._config_data["plants"]),
             },
         )
@@ -131,8 +128,8 @@ class PlantHubConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     }
                 ),
                 description_placeholders={
-                    "plant_name": self._config_data["plants"][-1][CONF_NAME],
-                    "plant_id": self._config_data["plants"][-1][CONF_PLANT_ID],
+                    "plant_name": self._config_data["plants"][-1]["name"],
+                    "plant_id": self._config_data["plants"][-1]["plant_id"],
                     "total_plants": len(self._config_data["plants"]),
                 },
             )
@@ -149,7 +146,7 @@ class PlantHubConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     ) -> FlowResult:
         """Handle final configuration step."""
         # Erstelle den Konfigurationseintrag
-        title = self._config_data[CONF_NAME]
+        title = self._config_data["name"]
         
         # Füge scan_interval hinzu (Standard: 5 Minuten)
         self._config_data["scan_interval"] = 300

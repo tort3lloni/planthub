@@ -10,8 +10,6 @@ from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.typing import ConfigType
 
 from .const import (
-    CONF_API_TOKEN,
-    CONF_PLANT_ID,
     DEFAULT_NAME,
     DEVICE_MANUFACTURER,
     DEVICE_MODEL,
