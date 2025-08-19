@@ -1,0 +1,363 @@
+# PlantHub - Home Assistant Integration
+
+Eine moderne und benutzerfreundliche Home Assistant Integration für die Überwachung von Pflanzen mit Webhook-API-Integration.
+
+[![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/custom-components/hacs)
+[![maintainer](https://img.shields.io/badge/maintainer-%40yourusername-blue.svg)](https://github.com/yourusername)
+[![homeassistant](https://img.shields.io/badge/home--assistant-2025.1.0+-blue.svg)](https://home-assistant.io/)
+[![python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/)
+
+## 🚀 Features
+
+- **Moderne Architektur**: Vollständig kompatibel mit den neuesten Home Assistant Standards (2025)
+- **Webhook-Integration**: Automatische Datenabfrage über PlantHub API
+- **HACS-Integration**: Einfache Installation über HACS (Home Assistant Community Store)
+- **Device Registry**: Jede Pflanze wird als separates Gerät angelegt
+- **Vollständige Sensor-Überwachung**: Alle wichtigen Pflanzen-Metriken
+- **Intelligente Fehlerbehandlung**: Robuste Fallback-Mechanismen bei API-Fehlern
+- **Deutsche und englische Lokalisierung**: Vollständig übersetzt
+- **Config Flow**: Benutzerfreundliche Konfiguration über die Home Assistant UI
+
+## 📋 Voraussetzungen
+
+### System-Anforderungen
+- **Home Assistant**: 2025.1.0 oder höher
+- **Python**: 3.11 oder höher
+- **HACS**: Installiert und konfiguriert
+
+### HACS Installation
+Falls HACS noch nicht installiert ist, folge der [offiziellen HACS-Installationsanleitung](https://hacs.xyz/docs/installation/installation/).
+
+### API-Anforderungen
+- PlantHub API Token
+- Internetverbindung für API-Aufrufe
+
+## 🔧 Installation
+
+### Über HACS (Empfohlen)
+
+1. **HACS öffnen**
+   - Gehe zu deinem Home Assistant Dashboard
+   - Öffne HACS über das Seitenmenü
+
+2. **Integration hinzufügen**
+   - Klicke auf "Integrations" in HACS
+   - Klicke auf das "+" Symbol oben rechts
+   - Suche nach "PlantHub"
+   - Klicke auf "Download"
+
+3. **Home Assistant neu starten**
+   - Nach dem Download erscheint eine Meldung
+   - Klicke auf "Restart" um Home Assistant neu zu starten
+
+4. **Integration konfigurieren**
+   - Gehe zu "Einstellungen" → "Geräte & Dienste"
+   - Klicke auf "+ Integration hinzufügen"
+   - Suche nach "PlantHub"
+   - Folge der Konfiguration
+
+### Manuelle Installation
+
+1. **Repository klonen**
+   ```bash
+   cd config/custom_components
+   git clone https://github.com/yourusername/planthub.git
+   ```
+
+2. **Home Assistant neu starten**
+
+3. **Integration konfigurieren**
+   - Gehe zu "Einstellungen" → "Geräte & Dienste"
+   - Klicke auf "+ Integration hinzufügen"
+   - Suche nach "PlantHub"
+
+## ⚙️ Konfiguration
+
+### Integration einrichten
+
+1. **Schritt 1: API Token**
+   - Gib deinen PlantHub API Token ein
+   - Der Token muss mindestens 10 Zeichen lang sein
+   - Optional: Gib einen Namen für die Integration ein
+
+2. **Schritt 2: Pflanze hinzufügen**
+   - Pflanzen-ID eingeben (z.B. "monstera_001")
+   - Optional: Pflanzenname eingeben (z.B. "Monstera Deliciosa")
+   - Klicke auf "Absenden"
+
+### Weitere Pflanzen hinzufügen
+
+1. Gehe zu "Einstellungen" → "Geräte & Dienste"
+2. Klicke auf die PlantHub Integration
+3. Klicke auf "Konfigurieren"
+4. Folge dem Config Flow für neue Pflanzen
+
+## 🌐 Webhook-API-Integration
+
+### API-Endpunkte
+
+Die Integration ruft automatisch folgende Endpunkte auf:
+
+- **Basis-URL**: `https://api.planthub.com/v1`
+- **Einzelne Pflanze**: `/plants/{plant_id}`
+- **Alle Pflanzen**: `/plants`
+
+### Authentifizierung
+
+- **Token-basiert**: Bearer Token aus der Konfiguration
+- **Headers**: Automatisch gesetzt mit User-Agent
+- **Timeout**: 30 Sekunden pro Anfrage
+
+### Datenabfrage
+
+- **Intervall**: Standardmäßig alle 5 Minuten (konfigurierbar)
+- **Automatisch**: Läuft im Hintergrund ohne Benutzerinteraktion
+- **Fehlerbehandlung**: Robuste Fallback-Mechanismen bei API-Fehlern
+
+## 📊 Verfügbare Sensoren
+
+Nach der Integration werden folgende Sensoren erstellt:
+
+- `sensor.planthub_status`: Gesamtstatus der Pflanze (healthy/warning/critical/unknown)
+- `sensor.planthub_soil_moisture`: Bodenfeuchtigkeit in Prozent
+- `sensor.planthub_air_temperature`: Lufttemperatur in °C
+- `sensor.planthub_air_humidity`: Luftfeuchtigkeit in Prozent
+- `sensor.planthub_light`: Helligkeit in Lux
+- `sensor.planthub_plant_id`: Versteckte Entität für interne Zwecke
+
+## 🔍 Statusbewertung
+
+Die Integration bewertet automatisch den Zustand deiner Pflanze:
+
+- **Healthy** (grün): Bodenfeuchtigkeit ≥ 50%
+- **Warning** (orange): Bodenfeuchtigkeit 30-49%
+- **Critical** (rot): Bodenfeuchtigkeit < 30%
+- **Unknown**: Keine Daten verfügbar
+
+## 🛡️ Fehlerbehandlung
+
+### API-Fehler
+
+Die Integration behandelt verschiedene API-Fehler intelligent:
+
+- **401 Unauthorized**: Token ungültig oder abgelaufen
+- **403 Forbidden**: Unzureichende Berechtigungen
+- **404 Not Found**: Pflanze nicht gefunden
+- **429 Too Many Requests**: Rate Limit überschritten
+- **5xx Server Errors**: Server-seitige Probleme
+
+### Fallback-Mechanismen
+
+Bei API-Fehlern:
+- Sensoren zeigen `unavailable` an
+- Fallback-Daten werden geloggt
+- Integration bleibt funktionsfähig
+- Automatische Wiederherstellung bei nächstem Update
+
+### Logging
+
+Alle API-Aufrufe und Fehler werden sauber geloggt:
+- **Debug**: Erfolgreiche API-Aufrufe
+- **Warning**: Rate Limits, Verbindungsprobleme
+- **Error**: Authentifizierungsfehler, Server-Fehler
+
+## 🎯 Verwendungsbeispiele
+
+### Einfache Überwachung
+
+```yaml
+# Automatisch erstellt nach der Integration
+sensor.planthub_status: "healthy"
+sensor.planthub_soil_moisture: 65
+sensor.planthub_air_temperature: 22.5
+```
+
+### Automatisierung bei kritischem Zustand
+
+```yaml
+automation:
+  - alias: "Pflanze gießen bei kritischer Feuchtigkeit"
+    trigger:
+      platform: state
+      entity_id: sensor.planthub_status
+      to: "critical"
+    action:
+      - service: notify.mobile_app
+        data:
+          title: "Pflanze braucht Wasser!"
+          message: "Die Bodenfeuchtigkeit ist kritisch niedrig."
+```
+
+### Dashboard-Integration
+
+```yaml
+# Lovelace Dashboard
+views:
+  - title: "Pflanzen-Überwachung"
+    cards:
+      - type: entities
+        title: "Pflanzen-Status"
+        entities:
+          - entity: sensor.planthub_status
+          - entity: sensor.planthub_soil_moisture
+          - entity: sensor.planthub_air_temperature
+          - entity: sensor.planthub_air_humidity
+          - entity: sensor.planthub_light
+```
+
+## 🛠️ Entwicklung
+
+### Projektstruktur
+
+```
+custom_components/planthub/
+├── __init__.py          # Hauptintegration mit Device Registry
+├── manifest.json        # Metadaten für Home Assistant 2025
+├── config_flow.py       # Config Flow mit Token + Geräte-Management
+├── const.py            # Konstanten und Webhook-Konfiguration
+├── sensor.py           # Alle Sensoren mit Webhook-Integration
+├── webhook.py          # Webhook-Funktionalität und API-Handler
+├── translations/       # Deutsche und englische Lokalisierung
+│   ├── de.json
+│   └── en.json
+├── repository.json     # HACS-Konfiguration
+├── requirements.txt   # Abhängigkeiten (aiohttp)
+└── test_webhook.py    # Unit-Tests
+```
+
+### Webhook-Architektur
+
+- **PlantHubWebhook**: Hauptklasse für API-Aufrufe
+- **Async Context Manager**: Automatische Session-Verwaltung
+- **Fehlerbehandlung**: Spezifische Exceptions für verschiedene Fehlertypen
+- **Datenvalidierung**: Plausibilitätsprüfung der API-Antworten
+
+### Anpassungen
+
+Die Integration kann einfach angepasst werden:
+
+1. **API-Endpunkte ändern**: Bearbeite `const.py`
+2. **Fehlerbehandlung erweitern**: Bearbeite `webhook.py`
+3. **Neue Sensoren hinzufügen**: Bearbeite `sensor.py`
+4. **Übersetzungen hinzufügen**: Bearbeite `translations/`
+
+## 🧪 Tests
+
+### Test-Suite ausführen
+
+```bash
+# Im custom_components/planthub Verzeichnis
+pytest test_webhook.py -v
+
+# Mit Coverage
+pytest test_webhook.py --cov=. --cov-report=html
+```
+
+### Test-Abhängigkeiten
+
+```bash
+pip install pytest pytest-asyncio pytest-cov
+```
+
+## 🐛 Fehlerbehebung
+
+### Häufige Probleme
+
+**API-Token ungültig:**
+- Überprüfe den Token in der Integration
+- Stelle sicher, dass der Token mindestens 10 Zeichen hat
+- Überprüfe die Token-Gültigkeit bei PlantHub
+
+**Verbindungsfehler:**
+- Überprüfe die Internetverbindung
+- Stelle sicher, dass die API-URL erreichbar ist
+- Überprüfe Firewall-Einstellungen
+
+**Rate Limit überschritten:**
+- Reduziere das Update-Intervall
+- Kontaktiere PlantHub für höhere Limits
+
+**Sensoren zeigen keine Werte:**
+- Überprüfe die Home Assistant Logs
+- Stelle sicher, dass die Integration läuft
+- Überprüfe die API-Antworten im Debug-Log
+
+**HACS-Installation schlägt fehl:**
+- Stelle sicher, dass HACS korrekt installiert ist
+- Überprüfe die Home Assistant Version (mindestens 2025.1.0)
+- Starte Home Assistant nach der Installation neu
+
+### Debug-Logging aktivieren
+
+```yaml
+# configuration.yaml
+logger:
+  custom_components.planthub: debug
+```
+
+## 📝 Changelog
+
+### Version 1.0.0
+- Erste Veröffentlichung
+- Vollständige Integration mit Config Flow
+- Webhook-API-Integration
+- Device Registry Support
+- Robuste Fehlerbehandlung
+- Deutsche und englische Lokalisierung
+- HACS-Kompatibilität
+- Vollständige Test-Suite
+- Moderne Home Assistant 2025 Standards
+
+## 🤝 Beitragen
+
+Beiträge sind willkommen! Bitte:
+
+1. Forke das Repository
+2. Erstelle einen Feature-Branch
+3. Mache deine Änderungen
+4. Erstelle einen Pull Request
+
+### Entwicklungsrichtlinien
+
+- Folge den Home Assistant Developer Guidelines
+- Verwende Type Hints für alle Funktionen
+- Schreibe Tests für neue Funktionalitäten
+- Halte den Code sauber und gut dokumentiert
+
+## 📄 Lizenz
+
+Dieses Projekt steht unter der MIT-Lizenz. Siehe [LICENSE](LICENSE) Datei für Details.
+
+## 🙏 Danksagungen
+
+- Home Assistant Community für die großartige Plattform
+- HACS-Team für die einfache Integration
+- PlantHub für die API
+- Alle Mitwirkenden und Tester
+
+## 📞 Support
+
+Bei Fragen oder Problemen:
+
+1. Überprüfe die [Issues](https://github.com/yourusername/planthub/issues)
+2. Erstelle ein neues Issue mit detaillierten Informationen
+3. Stelle sicher, dass du die neueste Version verwendest
+4. Überprüfe die Home Assistant Logs für Fehlerdetails
+
+### Community-Support
+
+- **GitHub Issues**: [PlantHub Issues](https://github.com/yourusername/planthub/issues)
+- **Home Assistant Forum**: [Community Forum](https://community.home-assistant.io/)
+- **Discord**: [Home Assistant Discord](https://discord.gg/c5DvZ4e)
+
+---
+
+## ⭐ Bewertung
+
+Falls dir diese Integration gefällt, gib ihr gerne einen Stern auf GitHub! 🌟
+
+**Viel Spaß mit deiner PlantHub Integration! 🌱**
+
+---
+
+*Diese Integration ist nicht offiziell von Home Assistant und wird von der Community entwickelt und gewartet.*

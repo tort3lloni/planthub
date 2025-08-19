@@ -1,0 +1,74 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "PlantHub Integration",
+        "description": "Konfiguriere die PlantHub Integration mit deinem API-Token.",
+        "data": {
+          "name": "Name der Integration",
+          "api_token": "API-Token"
+        }
+      },
+      "add_plants": {
+        "title": "Pflanze hinzufügen",
+        "description": "Füge eine Pflanze zur Überwachung hinzu.",
+        "data": {
+          "plant_id": "Pflanzen-ID",
+          "name": "Name der Pflanze (optional)"
+        }
+      },
+      "confirm_plants": {
+        "title": "Pflanze bestätigen",
+        "description": "Pflanze '{plant_name}' (ID: {plant_id}) wurde hinzugefügt. Gesamt: {total_plants} Pflanzen.",
+        "data": {
+          "add_another": "Weitere Pflanze hinzufügen"
+        }
+      }
+    },
+    "error": {
+      "invalid_token": "Der API-Token ist ungültig oder zu kurz. Bitte überprüfe deine Eingabe."
+    },
+    "abort": {
+      "already_configured": "Diese Integration ist bereits konfiguriert."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "PlantHub Optionen",
+        "description": "Konfiguriere erweiterte Optionen für PlantHub.",
+        "data": {
+          "scan_interval": "Aktualisierungsintervall (Sekunden)"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "planthub_status": {
+        "name": "Status",
+        "state": {
+          "healthy": "Gesund",
+          "warning": "Warnung",
+          "critical": "Kritisch",
+          "unknown": "Unbekannt"
+        }
+      },
+      "planthub_soil_moisture": {
+        "name": "Bodenfeuchtigkeit"
+      },
+      "planthub_air_temperature": {
+        "name": "Lufttemperatur"
+      },
+      "planthub_air_humidity": {
+        "name": "Luftfeuchtigkeit"
+      },
+      "planthub_light": {
+        "name": "Helligkeit"
+      },
+      "planthub_plant_id": {
+        "name": "Pflanzen-ID"
+      }
+    }
+  }
+}

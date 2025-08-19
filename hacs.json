@@ -1,0 +1,34 @@
+{
+  "name": "PlantHub",
+  "render_readme": true,
+  "domains": ["sensor"],
+  "homeassistant": "2025.1.0",
+  "iot_class": "Local Polling",
+  "zip_release": false,
+  "filename": "custom_components/planthub.zip",
+  "version": "1.0.0",
+  "url": "https://github.com/yourusername/planthub",
+  "maintainer": "Your Name <your.email@example.com>",
+  "country": ["DE", "EN"],
+  "tags": [
+    "plant",
+    "monitoring",
+    "sensor",
+    "garden",
+    "automation",
+    "climate",
+    "humidity",
+    "temperature",
+    "light"
+  ],
+  "requirements": [
+    "aiohttp>=3.8.0"
+  ],
+  "dependencies": [],
+  "codeowners": [
+    "@yourusername"
+  ],
+  "config_flow": true,
+  "documentation": "https://github.com/yourusername/planthub",
+  "issue_tracker": "https://github.com/yourusername/planthub/issues"
+}

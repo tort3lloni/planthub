@@ -1,0 +1,74 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "PlantHub Integration",
+        "description": "Configure the PlantHub integration with your API token.",
+        "data": {
+          "name": "Integration Name",
+          "api_token": "API Token"
+        }
+      },
+      "add_plants": {
+        "title": "Add Plant",
+        "description": "Add a plant for monitoring.",
+        "data": {
+          "plant_id": "Plant ID",
+          "name": "Plant Name (optional)"
+        }
+      },
+      "confirm_plants": {
+        "title": "Confirm Plant",
+        "description": "Plant '{plant_name}' (ID: {plant_id}) has been added. Total: {total_plants} plants.",
+        "data": {
+          "add_another": "Add another plant"
+        }
+      }
+    },
+    "error": {
+      "invalid_token": "The API token is invalid or too short. Please check your input."
+    },
+    "abort": {
+      "already_configured": "This integration is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "PlantHub Options",
+        "description": "Configure advanced options for PlantHub.",
+        "data": {
+          "scan_interval": "Update Interval (seconds)"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "planthub_status": {
+        "name": "Status",
+        "state": {
+          "healthy": "Healthy",
+          "warning": "Warning",
+          "critical": "Critical",
+          "unknown": "Unknown"
+        }
+      },
+      "planthub_soil_moisture": {
+        "name": "Soil Moisture"
+      },
+      "planthub_air_temperature": {
+        "name": "Air Temperature"
+      },
+      "planthub_air_humidity": {
+        "name": "Air Humidity"
+      },
+      "planthub_light": {
+        "name": "Light"
+      },
+      "planthub_plant_id": {
+        "name": "Plant ID"
+      }
+    }
+  }
+}

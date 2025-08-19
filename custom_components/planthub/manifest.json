@@ -1,0 +1,23 @@
+{
+  "domain": "planthub",
+  "name": "PlantHub",
+  "documentation": "https://github.com/yourusername/planthub",
+  "dependencies": [],
+  "codeowners": ["@yourusername"],
+  "requirements": ["aiohttp>=3.8.0"],
+  "iot_class": "Local Polling",
+  "version": "1.0.0",
+  "config_flow": true,
+  "homeassistant_api_version": "2025.1.0",
+  "integration_type": "device",
+  "quality_scale": "platinum",
+  "ssdp": [],
+  "zeroconf": [],
+  "dhcp": [],
+  "bluetooth": [],
+  "usb": [],
+  "matter": [],
+  "thread": [],
+  "homekit": [],
+  "mqtt": []
+}

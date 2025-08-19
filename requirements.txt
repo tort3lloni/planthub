@@ -1,0 +1,11 @@
+# PlantHub Integration Requirements
+# Hauptabhängigkeiten
+aiohttp>=3.8.0
+
+# Test Dependencies (optional, nur für Entwickler)
+pytest>=7.0.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.0.0
+
+# Home Assistant Integration Dependencies
+# Alle anderen Abhängigkeiten sind bereits in Home Assistant enthalten
