@@ -5,7 +5,6 @@ import logging
 from typing import Any
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_NAME, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.typing import ConfigType
@@ -22,7 +21,7 @@ from .const import (
 
 _LOGGER = logging.getLogger(__name__)
 
-PLATFORMS: list[Platform] = [Platform.SENSOR]
+PLATFORMS: list[str] = ["sensor"]
 
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
@@ -33,7 +32,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up PlantHub from a config entry."""
-    _LOGGER.info("Initialisiere PlantHub Integration: %s", entry.data[CONF_NAME])
+    _LOGGER.info("Initialisiere PlantHub Integration: %s", entry.data.get("name", DEFAULT_NAME))
 
     # Erstelle den Data Update Coordinator
     from .sensor import PlantHubDataUpdateCoordinator
@@ -61,7 +60,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
-    _LOGGER.info("Entlade PlantHub Integration: %s", entry.data[CONF_NAME])
+    _LOGGER.info("Entlade PlantHub Integration: %s", entry.data.get("name", DEFAULT_NAME))
 
     # Entferne alle Plattformen
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
@@ -79,7 +78,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 async def async_reload_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Reload config entry."""
-    _LOGGER.info("Lade PlantHub Integration neu: %s", entry.data[CONF_NAME])
+    _LOGGER.info("Lade PlantHub Integration neu: %s", entry.data.get("name", DEFAULT_NAME))
     await async_unload_entry(hass, entry)
     await async_setup_entry(hass, entry)
 

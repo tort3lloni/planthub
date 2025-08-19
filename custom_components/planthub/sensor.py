@@ -8,16 +8,11 @@ from typing import Any, Dict, Optional
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntity,
+    SensorEntityDescription,
     SensorStateClass,
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
-    ATTR_ATTRIBUTION,
-    ATTR_DEVICE_CLASS,
-    ATTR_ICON,
-    ATTR_NAME,
-    ATTR_STATE_CLASS,
-    ATTR_UNIT_OF_MEASUREMENT,
     CONF_NAME,
     PERCENTAGE,
     TEMP_CELSIUS,
@@ -32,13 +27,6 @@ from homeassistant.helpers.update_coordinator import (
 )
 
 from .const import (
-    ATTR_AIR_HUMIDITY,
-    ATTR_AIR_TEMPERATURE,
-    ATTR_LIGHT,
-    ATTR_PLANT_ID,
-    ATTR_PLANT_NAME,
-    ATTR_SOIL_MOISTURE,
-    ATTR_LAST_UPDATE,
     CONF_API_TOKEN,
     CONF_PLANT_ID,
     DEFAULT_NAME,
@@ -52,6 +40,63 @@ from .const import (
 )
 
 _LOGGER = logging.getLogger(__name__)
+
+# Sensor-Beschreibungen für moderne Home Assistant Standards
+SENSOR_DESCRIPTIONS = {
+    "status": SensorEntityDescription(
+        key="status",
+        name="Status",
+        icon="mdi:flower",
+        device_class=None,
+        state_class=None,
+        has_entity_name=True,
+    ),
+    "soil_moisture": SensorEntityDescription(
+        key="soil_moisture",
+        name="Bodenfeuchtigkeit",
+        icon="mdi:water-percent",
+        device_class=SensorDeviceClass.HUMIDITY,
+        state_class=SensorStateClass.MEASUREMENT,
+        native_unit_of_measurement=PERCENTAGE,
+        has_entity_name=True,
+    ),
+    "air_temperature": SensorEntityDescription(
+        key="air_temperature",
+        name="Lufttemperatur",
+        icon="mdi:thermometer",
+        device_class=SensorDeviceClass.TEMPERATURE,
+        state_class=SensorStateClass.MEASUREMENT,
+        native_unit_of_measurement=TEMP_CELSIUS,
+        has_entity_name=True,
+    ),
+    "air_humidity": SensorEntityDescription(
+        key="air_humidity",
+        name="Luftfeuchtigkeit",
+        icon="mdi:air-humidifier",
+        device_class=SensorDeviceClass.HUMIDITY,
+        state_class=SensorStateClass.MEASUREMENT,
+        native_unit_of_measurement=PERCENTAGE,
+        has_entity_name=True,
+    ),
+    "light": SensorEntityDescription(
+        key="light",
+        name="Helligkeit",
+        icon="mdi:brightness-6",
+        device_class=SensorDeviceClass.ILLUMINANCE,
+        state_class=SensorStateClass.MEASUREMENT,
+        native_unit_of_measurement=LIGHT_LUX,
+        has_entity_name=True,
+    ),
+    "plant_id": SensorEntityDescription(
+        key="plant_id",
+        name="Pflanzen-ID",
+        icon="mdi:identifier",
+        device_class=None,
+        state_class=None,
+        has_entity_name=True,
+        entity_registry_visible_default=False,
+    ),
+}
 
 
 async def async_setup_entry(
@@ -102,7 +147,7 @@ class PlantHubDataUpdateCoordinator(DataUpdateCoordinator):
         super().__init__(
             hass,
             _LOGGER,
-            name=f"{DOMAIN}_{config_entry.data[CONF_NAME]}",
+            name=f"{DOMAIN}_{config_entry.data.get('name', DEFAULT_NAME)}",
             update_interval=config_entry.data.get("scan_interval", 300),
         )
         
@@ -130,8 +175,8 @@ class PlantHubDataUpdateCoordinator(DataUpdateCoordinator):
                 
                 # Aktualisiere Pflanzennamen
                 for plant_data in all_plants_data:
-                    plant_id = plant_data.get(ATTR_PLANT_ID)
-                    plant_name = plant_data.get(ATTR_PLANT_NAME, plant_id)
+                    plant_id = plant_data.get("plant_id")
+                    plant_name = plant_data.get("plant_name", plant_id)
                     if plant_id:
                         self._plant_names[plant_id] = plant_name
                 
@@ -154,7 +199,7 @@ class PlantHubDataUpdateCoordinator(DataUpdateCoordinator):
             return None
             
         for plant_data in self.data["plants"]:
-            if plant_data.get(ATTR_PLANT_ID) == plant_id:
+            if plant_data.get("plant_id") == plant_id:
                 return plant_data
         return None
 
@@ -180,9 +225,11 @@ class BasePlantHubSensor(CoordinatorEntity, SensorEntity):
         self.plant_name = plant_name
         self.sensor_type = sensor_type
         
+        # Verwende moderne SensorEntityDescription
+        self.entity_description = SENSOR_DESCRIPTIONS[sensor_type]
+        
         # Erstelle eindeutige Entity-ID
         self._attr_unique_id = f"{plant_id}_{sensor_type}"
-        self._attr_name = f"{plant_name} {sensor_type.replace('_', ' ').title()}"
         
         # Verknüpfe mit Device Registry
         self._attr_device_info = {
@@ -210,9 +257,9 @@ class BasePlantHubSensor(CoordinatorEntity, SensorEntity):
             return {}
             
         return {
-            ATTR_PLANT_ID: self.plant_id,
-            ATTR_PLANT_NAME: self.plant_name,
-            ATTR_LAST_UPDATE: plant_data.get(ATTR_LAST_UPDATE),
+            "plant_id": self.plant_id,
+            "plant_name": self.plant_name,
+            "last_update": plant_data.get("last_update"),
         }
 
 
@@ -227,9 +274,6 @@ class PlantHubStatusSensor(BasePlantHubSensor):
     ) -> None:
         """Initialize the status sensor."""
         super().__init__(coordinator, plant_id, plant_name, "status")
-        self._attr_icon = "mdi:flower"
-        self._attr_device_class = None
-        self._attr_state_class = None
 
     @property
     def native_value(self) -> StateType:
@@ -238,7 +282,7 @@ class PlantHubStatusSensor(BasePlantHubSensor):
         if not plant_data:
             return STATUS_UNKNOWN
             
-        soil_moisture = plant_data.get(ATTR_SOIL_MOISTURE)
+        soil_moisture = plant_data.get("soil_moisture")
         if soil_moisture is None:
             return STATUS_UNKNOWN
             
@@ -256,10 +300,10 @@ class PlantHubStatusSensor(BasePlantHubSensor):
         plant_data = self.coordinator.get_plant_data(self.plant_id)
         if plant_data:
             attrs.update({
-                ATTR_SOIL_MOISTURE: plant_data.get(ATTR_SOIL_MOISTURE),
-                ATTR_AIR_TEMPERATURE: plant_data.get(ATTR_AIR_TEMPERATURE),
-                ATTR_AIR_HUMIDITY: plant_data.get(ATTR_AIR_HUMIDITY),
-                ATTR_LIGHT: plant_data.get(ATTR_LIGHT),
+                "soil_moisture": plant_data.get("soil_moisture"),
+                "air_temperature": plant_data.get("air_temperature"),
+                "air_humidity": plant_data.get("air_humidity"),
+                "light": plant_data.get("light"),
             })
         return attrs
 
@@ -275,10 +319,6 @@ class PlantHubSoilMoistureSensor(BasePlantHubSensor):
     ) -> None:
         """Initialize the soil moisture sensor."""
         super().__init__(coordinator, plant_id, plant_name, "soil_moisture")
-        self._attr_icon = "mdi:water-percent"
-        self._attr_device_class = SensorDeviceClass.HUMIDITY
-        self._attr_state_class = SensorStateClass.MEASUREMENT
-        self._attr_native_unit_of_measurement = PERCENTAGE
 
     @property
     def native_value(self) -> StateType:
@@ -286,7 +326,7 @@ class PlantHubSoilMoistureSensor(BasePlantHubSensor):
         plant_data = self.coordinator.get_plant_data(self.plant_id)
         if not plant_data:
             return None
-        return plant_data.get(ATTR_SOIL_MOISTURE)
+        return plant_data.get("soil_moisture")
 
 
 class PlantHubAirTemperatureSensor(BasePlantHubSensor):
@@ -300,10 +340,6 @@ class PlantHubAirTemperatureSensor(BasePlantHubSensor):
     ) -> None:
         """Initialize the air temperature sensor."""
         super().__init__(coordinator, plant_id, plant_name, "air_temperature")
-        self._attr_icon = "mdi:thermometer"
-        self._attr_device_class = SensorDeviceClass.TEMPERATURE
-        self._attr_state_class = SensorStateClass.MEASUREMENT
-        self._attr_native_unit_of_measurement = TEMP_CELSIUS
 
     @property
     def native_value(self) -> StateType:
@@ -311,7 +347,7 @@ class PlantHubAirTemperatureSensor(BasePlantHubSensor):
         plant_data = self.coordinator.get_plant_data(self.plant_id)
         if not plant_data:
             return None
-        return plant_data.get(ATTR_AIR_TEMPERATURE)
+        return plant_data.get("air_temperature")
 
 
 class PlantHubAirHumiditySensor(BasePlantHubSensor):
@@ -325,10 +361,6 @@ class PlantHubAirHumiditySensor(BasePlantHubSensor):
     ) -> None:
         """Initialize the air humidity sensor."""
         super().__init__(coordinator, plant_id, plant_name, "air_humidity")
-        self._attr_icon = "mdi:air-humidifier"
-        self._attr_device_class = SensorDeviceClass.HUMIDITY
-        self._attr_state_class = SensorStateClass.MEASUREMENT
-        self._attr_native_unit_of_measurement = PERCENTAGE
 
     @property
     def native_value(self) -> StateType:
@@ -336,7 +368,7 @@ class PlantHubAirHumiditySensor(BasePlantHubSensor):
         plant_data = self.coordinator.get_plant_data(self.plant_id)
         if not plant_data:
             return None
-        return plant_data.get(ATTR_AIR_HUMIDITY)
+        return plant_data.get("air_humidity")
 
 
 class PlantHubLightSensor(BasePlantHubSensor):
@@ -350,10 +382,6 @@ class PlantHubLightSensor(BasePlantHubSensor):
     ) -> None:
         """Initialize the light sensor."""
         super().__init__(coordinator, plant_id, plant_name, "light")
-        self._attr_icon = "mdi:brightness-6"
-        self._attr_device_class = SensorDeviceClass.ILLUMINANCE
-        self._attr_state_class = SensorStateClass.MEASUREMENT
-        self._attr_native_unit_of_measurement = LIGHT_LUX
 
     @property
     def native_value(self) -> StateType:
@@ -361,7 +389,7 @@ class PlantHubLightSensor(BasePlantHubSensor):
         plant_data = self.coordinator.get_plant_data(self.plant_id)
         if not plant_data:
             return None
-        return plant_data.get(ATTR_LIGHT)
+        return plant_data.get("light")
 
 
 class PlantHubPlantIdSensor(BasePlantHubSensor):
@@ -375,10 +403,6 @@ class PlantHubPlantIdSensor(BasePlantHubSensor):
     ) -> None:
         """Initialize the plant ID sensor."""
         super().__init__(coordinator, plant_id, plant_name, "plant_id")
-        self._attr_icon = "mdi:identifier"
-        self._attr_device_class = None
-        self._attr_state_class = None
-        self._attr_entity_registry_visible_default = False
 
     @property
     def native_value(self) -> StateType:

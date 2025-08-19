@@ -9,7 +9,6 @@ from homeassistant import config_entries
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.exceptions import HomeAssistantError
-from homeassistant.helpers import config_validation as cv
 
 from .const import (
     CONF_API_TOKEN,
@@ -197,7 +196,7 @@ class PlantHubOptionsFlow(config_entries.OptionsFlow):
                         vol.Optional(
                             "scan_interval",
                             default=self.config_entry.data.get("scan_interval", 300),
-                        ): cv.positive_int,
+                        ): int,
                     }
                 ),
             )

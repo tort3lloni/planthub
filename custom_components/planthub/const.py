@@ -20,15 +20,6 @@ WEBHOOK_BASE_URL: Final = "http://govegan.local:5678/webhook/v1"
 WEBHOOK_ENDPOINT: Final = "/planthub"
 WEBHOOK_TIMEOUT: Final = 30  # Sekunden
 
-# Attribute
-ATTR_PLANT_NAME: Final = "plant_name"
-ATTR_PLANT_ID: Final = "plant_id"
-ATTR_SOIL_MOISTURE: Final = "soil_moisture"
-ATTR_AIR_TEMPERATURE: Final = "air_temperature"
-ATTR_AIR_HUMIDITY: Final = "air_humidity"
-ATTR_LIGHT: Final = "light"
-ATTR_LAST_UPDATE: Final = "last_update"
-
 # Status
 STATUS_HEALTHY: Final = "healthy"
 STATUS_WARNING: Final = "warning"
