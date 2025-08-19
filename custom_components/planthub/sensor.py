@@ -15,7 +15,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
     PERCENTAGE,
     UnitOfTemperature,
-    UnitOfIlluminance,
+    LIGHT_LUX,
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -86,7 +86,7 @@ SENSOR_DESCRIPTIONS = {
         icon="mdi:brightness-6",
         device_class=SensorDeviceClass.ILLUMINANCE,
         state_class=SensorStateClass.MEASUREMENT,
-        native_unit_of_measurement=UnitOfIlluminance.LUX,
+        native_unit_of_measurement=LIGHT_LUX,
         has_entity_name=True,
         entity_registry_visible_default=True,
     ),
