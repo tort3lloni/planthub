@@ -1,1 +1,0 @@
-"""Frontend für PlantHub Integration."""
