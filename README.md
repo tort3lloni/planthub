@@ -8,6 +8,7 @@ Eine moderne und benutzerfreundliche Home Assistant Integration für die Überwa
 [![maintainer](https://img.shields.io/badge/maintainer-%40yourusername-blue.svg)](https://github.com/yourusername)
 [![homeassistant](https://img.shields.io/badge/home--assistant-2025.1.0+-blue.svg)](https://home-assistant.io/)
 [![python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/)
+[![version](https://img.shields.io/badge/version-1.1.1-green.svg)](https://github.com/yourusername/planthub/releases)
 
 ## 🚀 Features
 

@@ -1,5 +1,23 @@
 # PlantHub Integration - Changelog
 
+## [1.1.1] - 2024-01-15
+
+### 🔧 **Home Assistant 2025 Kompatibilität**
+
+#### **Deprecation-Warnung behoben**
+- **Behoben**: `self.config_entry` wird nicht mehr explizit in OptionsFlow gesetzt
+- **Kompatibilität**: Vollständig kompatibel mit Home Assistant 2025.12+
+- **Zukunftssicher**: Keine veralteten Patterns mehr im Code
+
+### 📚 **Technische Verbesserungen**
+
+#### **OptionsFlow-Refactoring**
+- Entfernung des veralteten `__init__`-Konstruktors
+- Verwendung der modernen Home Assistant 2025 OptionsFlow-API
+- Automatische `config_entry`-Bereitstellung über Basis-Klasse
+
+---
+
 ## [1.1.0] - 2024-01-15
 
 ### 🔄 **Wichtige Änderungen**
