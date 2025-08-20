@@ -84,34 +84,33 @@ async def async_reload_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
 async def _create_device_registry_entries(
     hass: HomeAssistant, entry: ConfigEntry, coordinator: Any
 ) -> None:
-    """Erstelle Device Registry Einträge für alle Pflanzen."""
+    """Erstelle Device Registry Eintrag für die konfigurierte Pflanze."""
     try:
         device_registry = dr.async_get(hass)
         
-        for plant_id in coordinator.plant_ids:
-            plant_name = coordinator.get_plant_name(plant_id)
-            
-            # Erstelle oder aktualisiere den Device Registry Eintrag
-            device_registry.async_get_or_create(
-                config_entry_id=entry.entry_id,
-                identifiers={(DOMAIN, plant_id)},
-                name=plant_name,
-                manufacturer=DEVICE_MANUFACTURER,
-                model=DEVICE_MODEL,
-                sw_version=DEVICE_SW_VERSION,
-                via_device=(DOMAIN, entry.entry_id),
-            )
-            
-            _LOGGER.debug("Device Registry Eintrag erstellt/aktualisiert für Pflanze: %s", plant_id)
-            
+        plant_id = coordinator.plant_id
+        plant_name = coordinator.plant_name
+        
+        # Erstelle oder aktualisiere den Device Registry Eintrag
+        device_registry.async_get_or_create(
+            config_entry_id=entry.entry_id,
+            identifiers={(DOMAIN, plant_id)},
+            name=plant_name,
+            manufacturer=DEVICE_MANUFACTURER,
+            model=DEVICE_MODEL,
+            sw_version=DEVICE_SW_VERSION,
+        )
+        
+        _LOGGER.debug("Device Registry Eintrag erstellt/aktualisiert für Pflanze: %s", plant_id)
+        
     except Exception as e:
-        _LOGGER.error("Fehler beim Erstellen der Device Registry Einträge: %s", e)
+        _LOGGER.error("Fehler beim Erstellen des Device Registry Eintrags: %s", e)
 
 
 async def _remove_device_registry_entries(
     hass: HomeAssistant, entry: ConfigEntry
 ) -> None:
-    """Entferne Device Registry Einträge für alle Pflanzen."""
+    """Entferne Device Registry Eintrag für die konfigurierte Pflanze."""
     try:
         device_registry = dr.async_get(hass)
         
@@ -124,4 +123,4 @@ async def _remove_device_registry_entries(
             _LOGGER.debug("Device Registry Eintrag entfernt: %s", device.id)
             
     except Exception as e:
-        _LOGGER.error("Fehler beim Entfernen der Device Registry Einträge: %s", e)
+        _LOGGER.error("Fehler beim Entfernen des Device Registry Eintrags: %s", e)

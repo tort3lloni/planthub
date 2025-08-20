@@ -106,7 +106,7 @@ class PlantHubWebhook:
         url = f"{self._base_url}{WEBHOOK_ENDPOINT}/{plant_id}"
         
         try:
-            _LOGGER.debug("Rufe PlantHub API auf: %s", url)
+            _LOGGER.debug("Rufe PlantHub API für Pflanze %s auf: %s", plant_id, url)
             
             if self._http_client:
                 response = await self._http_client.get(url)
@@ -115,7 +115,9 @@ class PlantHubWebhook:
                     await self._handle_response_status(response, plant_id)
                     data = await response.json()
                     _LOGGER.debug("API-Antwort für Pflanze %s: %s", plant_id, data)
-                    return self._normalize_plant_data(data, plant_id)
+                    
+                    normalized_data = self._normalize_plant_data(data, plant_id)
+                    return normalized_data
                 
         except asyncio.TimeoutError:
             _LOGGER.error("Timeout beim API-Aufruf für Pflanze %s", plant_id)
@@ -128,43 +130,6 @@ class PlantHubWebhook:
         except Exception as e:
             _LOGGER.error("Unerwarteter Fehler beim API-Aufruf für Pflanze %s: %s", plant_id, e)
             raise PlantHubWebhookError(f"Unerwarteter Fehler für Pflanze {plant_id}: {e}")
-
-    async def fetch_all_plants_data(self) -> List[Dict[str, Any]]:
-        """Hole Daten für alle Pflanzen."""
-        if not self.session and self._http_client is None:
-            raise PlantHubConnectionError("Webhook-Session nicht initialisiert")
-
-        url = f"{self._base_url}{WEBHOOK_ENDPOINT}"
-        
-        try:
-            _LOGGER.debug("Rufe PlantHub API für alle Pflanzen auf: %s", url)
-            
-            if self._http_client:
-                response = await self._http_client.get(url)
-            else:
-                async with self.session.get(url) as response:
-                    await self._handle_response_status(response, "all_plants")
-                    data = await response.json()
-                    _LOGGER.debug("API-Antwort für alle Pflanzen: %s", data)
-                    
-                    plants_data = []
-                    for plant in data.get("plants", []):
-                        normalized_data = self._normalize_plant_data(plant, plant.get("id", "unknown"))
-                        plants_data.append(normalized_data)
-                    
-                    return plants_data
-                
-        except asyncio.TimeoutError:
-            _LOGGER.error("Timeout beim API-Aufruf für alle Pflanzen")
-            raise PlantHubConnectionError("Timeout für alle Pflanzen")
-            
-        except aiohttp.ClientError as e:
-            _LOGGER.error("Client-Fehler beim API-Aufruf für alle Pflanzen: %s", e)
-            raise PlantHubConnectionError(f"Verbindungsfehler für alle Pflanzen: {e}")
-            
-        except Exception as e:
-            _LOGGER.error("Unerwarteter Fehler beim API-Aufruf für alle Pflanzen: %s", e)
-            raise PlantHubWebhookError(f"Unerwarteter Fehler für alle Pflanzen: {e}")
 
     async def _handle_response_status(self, response: aiohttp.ClientResponse, context: str) -> None:
         """Behandle HTTP-Status-Codes und werfe entsprechende Exceptions."""

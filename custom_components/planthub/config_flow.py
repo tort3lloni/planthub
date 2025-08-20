@@ -39,6 +39,8 @@ class PlantHubConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     {
                         vol.Required("name", default=DEFAULT_NAME): str,
                         vol.Required("api_token"): str,
+                        vol.Required("plant_id"): str,
+                        vol.Optional("plant_name"): str,
                     }
                 ),
                 description_placeholders={
@@ -57,6 +59,8 @@ class PlantHubConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     {
                         vol.Required("name", default=user_input["name"]): str,
                         vol.Required("api_token"): str,
+                        vol.Required("plant_id", default=user_input["plant_id"]): str,
+                        vol.Optional("plant_name", default=user_input.get("plant_name", "")): str,
                     }
                 ),
                 errors={"base": "invalid_token"},
@@ -65,91 +69,24 @@ class PlantHubConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 },
             )
 
-        # Speichere die Konfigurationsdaten für den nächsten Schritt
-        self._config_data = user_input.copy()
-        
-        # Gehe zum nächsten Schritt: Pflanzen hinzufügen
-        return await self.async_step_add_plants()
-
-    async def async_step_add_plants(
-        self, user_input: Optional[Dict[str, Any]] = None
-    ) -> FlowResult:
-        """Handle adding plants step."""
-        if user_input is None:
-            return self.async_show_form(
-                step_id="add_plants",
-                data_schema=vol.Schema(
-                    {
-                        vol.Required("plant_id"): str,
-                        vol.Optional("name"): str,
-                    }
-                ),
-                description_placeholders={
-                    "name": self._config_data["name"],
-                },
-            )
-
-        # Füge die Pflanze zur Konfiguration hinzu
-        plant_config = {
+        # Speichere die Konfigurationsdaten
+        self._config_data = {
+            "name": user_input["name"],
+            "api_token": user_input["api_token"],
             "plant_id": user_input["plant_id"],
-            "name": user_input.get("name", user_input["plant_id"]),
+            "plant_name": user_input.get("plant_name", user_input["plant_id"]),
+            "scan_interval": 300,  # Standard: 5 Minuten
         }
-
-        if "plants" not in self._config_data:
-            self._config_data["plants"] = []
         
-        self._config_data["plants"].append(plant_config)
-
-        # Zeige Bestätigung und frage nach weiteren Pflanzen
-        return self.async_show_form(
-            step_id="confirm_plants",
-            data_schema=vol.Schema(
-                {
-                    vol.Optional("add_another", default=False): bool,
-                }
-            ),
-            description_placeholders={
-                "plant_name": plant_config["name"],
-                "plant_id": plant_config["plant_id"],
-                "total_plants": len(self._config_data["plants"]),
-            },
-        )
-
-    async def async_step_confirm_plants(
-        self, user_input: Optional[Dict[str, Any]] = None
-    ) -> FlowResult:
-        """Handle plant confirmation step."""
-        if user_input is None:
-            return self.async_show_form(
-                step_id="confirm_plants",
-                data_schema=vol.Schema(
-                    {
-                        vol.Optional("add_another", default=False): bool,
-                    }
-                ),
-                description_placeholders={
-                    "plant_name": self._config_data["plants"][-1]["name"],
-                    "plant_id": self._config_data["plants"][-1]["plant_id"],
-                    "total_plants": len(self._config_data["plants"]),
-                },
-            )
-
-        if user_input.get("add_another", False):
-            # Weitere Pflanze hinzufügen
-            return await self.async_step_add_plants()
-        else:
-            # Konfiguration abschließen
-            return await self.async_step_final()
+        # Konfiguration direkt abschließen
+        return await self.async_step_final()
 
     async def async_step_final(
         self, user_input: Optional[Dict[str, Any]] = None
     ) -> FlowResult:
         """Handle final configuration step."""
         # Erstelle den Konfigurationseintrag
-        title = self._config_data["name"]
-        
-        # Füge scan_interval hinzu (Standard: 5 Minuten)
-        self._config_data["scan_interval"] = 300
+        title = f"{self._config_data['name']} - {self._config_data['plant_name']}"
         
         return self.async_create_entry(
             title=title,
@@ -201,10 +138,9 @@ class PlantHubOptionsFlow(config_entries.OptionsFlow):
         # Aktualisiere die Konfiguration
         new_data = self.config_entry.data.copy()
         new_data["scan_interval"] = user_input["scan_interval"]
-
-        # Aktualisiere den Konfigurationseintrag
+        
         self.hass.config_entries.async_update_entry(
             self.config_entry, data=new_data
         )
-
+        
         return self.async_create_entry(title="", data={})
