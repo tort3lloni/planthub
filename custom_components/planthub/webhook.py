@@ -58,6 +58,10 @@ class HttpClientProtocol(Protocol):
     async def get(self, url: str) -> aiohttp.ClientResponse:
         """Make GET request."""
         ...
+    
+    async def post(self, url: str, json: Dict[str, Any]) -> aiohttp.ClientResponse:
+        """Make POST request with JSON body."""
+        ...
 
 
 class PlantHubWebhook:
@@ -103,7 +107,13 @@ class PlantHubWebhook:
         if not self.session and self._http_client is None:
             raise PlantHubConnectionError("Webhook-Session nicht initialisiert")
 
-        url = f"{self._base_url}{WEBHOOK_ENDPOINT}/{plant_id}"
+        # URL ohne plant_id - plant_id wird im Body übertragen
+        url = f"{self._base_url}{WEBHOOK_ENDPOINT}"
+        
+        # Request-Body mit plant_id
+        request_body = {
+            "plant_id": plant_id
+        }
         
         # Detailliertes Logging vor dem Request
         _LOGGER.debug("=== PLANT HUB API REQUEST DEBUG ===")
@@ -111,6 +121,7 @@ class PlantHubWebhook:
         _LOGGER.debug("Base URL: %s", self._base_url)
         _LOGGER.debug("Webhook Endpoint: %s", WEBHOOK_ENDPOINT)
         _LOGGER.debug("Final URL: %s", url)
+        _LOGGER.debug("Request Body: %s", request_body)
         _LOGGER.debug("API Token: %s...", self.api_token[:10] + "..." if len(self.api_token) > 10 else "***")
         _LOGGER.debug("Headers: %s", {k: v for k, v in self._headers.items() if k != "Authorization"})
         _LOGGER.debug("Authorization: Bearer %s...", self.api_token[:10] + "..." if len(self.api_token) > 10 else "***")
@@ -118,12 +129,14 @@ class PlantHubWebhook:
         _LOGGER.debug("==================================")
         
         try:
-            _LOGGER.debug("Rufe PlantHub API für Pflanze %s auf: %s", plant_id, url)
+            _LOGGER.debug("Rufe PlantHub API für Pflanze %s auf: %s mit Body: %s", plant_id, url, request_body)
             
             if self._http_client:
-                response = await self._http_client.get(url)
+                # Für Mock-Tests - POST mit Body
+                response = await self._http_client.post(url, json=request_body)
             else:
-                async with self.session.get(url) as response:
+                # POST-Request mit plant_id im Body
+                async with self.session.post(url, json=request_body) as response:
                     # Response-Logging
                     _LOGGER.debug("=== PLANT HUB API RESPONSE DEBUG ===")
                     _LOGGER.debug("Plant ID: %s", plant_id)
