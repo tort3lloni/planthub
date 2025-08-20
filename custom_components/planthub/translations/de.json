@@ -3,65 +3,60 @@
     "step": {
       "user": {
         "title": "PlantHub Integration",
-        "description": "Konfiguriere die PlantHub Integration. Der API-Token muss in der configuration.yaml unter planthub: token: konfiguriert werden.",
-        "data": {
-          "name": "Name der Integration"
-        }
+        "description": "PlantHub Integration für Pflanzenüberwachung. Der API Token muss in der configuration.yaml konfiguriert sein.",
+        "data": {}
       },
       "add_first_plant": {
         "title": "Erste Pflanze hinzufügen",
-        "description": "Füge die erste Pflanze zur Überwachung hinzu.",
+        "description": "Füge deine erste Pflanze zur PlantHub Integration hinzu.",
         "data": {
           "plant_id": "Pflanzen-ID",
-          "plant_name": "Name der Pflanze (optional)"
+          "plant_name": "Pflanzenname (optional)"
         }
       }
     },
     "error": {
-      "token_not_configured": "Der API-Token wurde nicht in der configuration.yaml gefunden. Bitte konfiguriere den Token unter planthub: token: bevor du die Integration hinzufügst."
+      "token_not_configured": "PlantHub Token nicht in configuration.yaml konfiguriert. Bitte füge 'planthub: token: \"dein_token\"' zu deiner configuration.yaml hinzu."
     },
     "abort": {
-      "already_configured": "Diese Integration ist bereits konfiguriert."
+      "already_configured": "PlantHub Integration ist bereits konfiguriert."
     }
   },
   "options": {
     "step": {
       "init": {
         "title": "PlantHub Optionen",
-        "description": "Verwalte Pflanzen und Einstellungen für PlantHub.",
+        "description": "Verwalte deine PlantHub Pflanzen. Aktuelle Pflanzen:\n{current_plants}",
         "data": {
-          "action": "Aktion auswählen"
-        },
-        "description_placeholders": {
-          "current_plants": "Aktuelle Pflanzen"
+          "action": "Aktion"
         }
       },
       "add_plant": {
-        "title": "Pflanze hinzufügen",
-        "description": "Füge eine neue Pflanze zur Überwachung hinzu.",
+        "title": "Neue Pflanze hinzufügen",
+        "description": "Füge eine neue Pflanze zur PlantHub Integration hinzu.",
         "data": {
           "plant_id": "Pflanzen-ID",
-          "plant_name": "Name der Pflanze (optional)"
+          "plant_name": "Pflanzenname (optional)"
         }
       },
       "remove_plant": {
         "title": "Pflanze entfernen",
         "description": "Wähle eine Pflanze aus, die entfernt werden soll.",
         "data": {
-          "plant_id_to_remove": "Zu entfernende Pflanze"
+          "plant_id": "Pflanze zum Entfernen"
         }
       },
       "settings": {
         "title": "Einstellungen",
-        "description": "Ändere die Einstellungen für PlantHub.",
+        "description": "Ändere die PlantHub Integrationseinstellungen.",
         "data": {
-          "scan_interval": "Aktualisierungsintervall (Sekunden)"
+          "scan_interval": "Update-Intervall (Sekunden)"
         }
       }
     },
     "error": {
       "plant_id_exists": "Eine Pflanze mit dieser ID existiert bereits.",
-      "no_plants_to_remove": "Es sind keine Pflanzen zum Entfernen vorhanden."
+      "no_plants_to_remove": "Keine Pflanzen zum Entfernen verfügbar."
     }
   },
   "entity": {

@@ -33,41 +33,16 @@ class PlantHubConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self, user_input: Optional[Dict[str, Any]] = None
     ) -> FlowResult:
         """Handle the initial step."""
-        if user_input is None:
-            return self.async_show_form(
-                step_id="user",
-                data_schema=vol.Schema(
-                    {
-                        vol.Required("name", default=DEFAULT_NAME): str,
-                    }
-                ),
-                description_placeholders={
-                    "name": DEFAULT_NAME,
-                },
-            )
-
         # Prüfe, ob der Token in hass.data verfügbar ist
         if CONF_TOKEN not in self.hass.data.get(DOMAIN, {}):
             return self.async_show_form(
                 step_id="user",
-                data_schema=vol.Schema(
-                    {
-                        vol.Required("name", default=user_input["name"]): str,
-                    }
-                ),
+                data_schema=vol.Schema({}),
                 errors={"base": "token_not_configured"},
-                description_placeholders={
-                    "name": user_input["name"],
-                },
+                description_placeholders={},
             )
 
-        # Speichere die Konfigurationsdaten
-        self._config_data = {
-            "name": user_input["name"],
-            "scan_interval": 300,  # Standard: 5 Minuten
-        }
-        
-        # Gehe zum nächsten Schritt: Erste Pflanze hinzufügen
+        # Gehe direkt zum nächsten Schritt: Erste Pflanze hinzufügen
         return await self.async_step_add_first_plant()
 
     async def async_step_add_first_plant(
@@ -94,7 +69,11 @@ class PlantHubConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             "name": user_input.get("plant_name", user_input["plant_id"]),
         }
 
-        self._config_data["plants"] = [plant_config]
+        # Speichere die Konfigurationsdaten
+        self._config_data = {
+            "scan_interval": 300,  # Standard: 5 Minuten
+            "plants": [plant_config],
+        }
         
         # Konfiguration abschließen
         return await self.async_step_final()
@@ -103,8 +82,9 @@ class PlantHubConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self, user_input: Optional[Dict[str, Any]] = None
     ) -> FlowResult:
         """Handle final configuration step."""
-        # Erstelle den Konfigurationseintrag
-        title = self._config_data["name"]
+        # Erstelle den Konfigurationseintrag mit automatischem Namen
+        plant_name = self._config_data["plants"][0]["name"]
+        title = f"PlantHub | {plant_name}"
         
         return self.async_create_entry(
             title=title,

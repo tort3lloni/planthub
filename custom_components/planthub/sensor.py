@@ -48,7 +48,6 @@ SENSOR_DESCRIPTIONS = {
         device_class=None,
         state_class=None,
         native_unit_of_measurement=None,
-        has_entity_name=True,
         entity_registry_visible_default=True,
     ),
     "soil_moisture": SensorEntityDescription(
@@ -58,7 +57,6 @@ SENSOR_DESCRIPTIONS = {
         device_class=SensorDeviceClass.HUMIDITY,
         state_class=SensorStateClass.MEASUREMENT,
         native_unit_of_measurement=PERCENTAGE,
-        has_entity_name=True,
         entity_registry_visible_default=True,
     ),
     "air_temperature": SensorEntityDescription(
@@ -68,7 +66,6 @@ SENSOR_DESCRIPTIONS = {
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
-        has_entity_name=True,
         entity_registry_visible_default=True,
     ),
     "air_humidity": SensorEntityDescription(
@@ -78,7 +75,6 @@ SENSOR_DESCRIPTIONS = {
         device_class=SensorDeviceClass.HUMIDITY,
         state_class=SensorStateClass.MEASUREMENT,
         native_unit_of_measurement=PERCENTAGE,
-        has_entity_name=True,
         entity_registry_visible_default=True,
     ),
     "illuminance": SensorEntityDescription(
@@ -88,7 +84,6 @@ SENSOR_DESCRIPTIONS = {
         device_class=SensorDeviceClass.ILLUMINANCE,
         state_class=SensorStateClass.MEASUREMENT,
         native_unit_of_measurement=LIGHT_LUX,
-        has_entity_name=True,
         entity_registry_visible_default=True,
     ),
     "plant_id": SensorEntityDescription(
@@ -98,7 +93,6 @@ SENSOR_DESCRIPTIONS = {
         device_class=None,
         state_class=None,
         native_unit_of_measurement=None,
-        has_entity_name=True,
         entity_registry_visible_default=False,
     ),
 }
@@ -229,8 +223,8 @@ class BasePlantHubSensor(CoordinatorEntity, SensorEntity):
         # Erstelle eindeutige Entity-ID basierend auf plant_id und description.key
         self._attr_unique_id = f"{plant_id}_{self.entity_description.key}"
         
-        # Der Name wird aus der Entity Registry gelesen, nicht fest gesetzt
-        # has_entity_name=True ist bereits in der SensorEntityDescription gesetzt
+        # Wichtig: has_entity_name=True für UI-Umbenennung
+        self._attr_has_entity_name = True
         
         # Verknüpfe mit Device Registry
         self._attr_device_info = {
@@ -244,20 +238,9 @@ class BasePlantHubSensor(CoordinatorEntity, SensorEntity):
     @property
     def name(self) -> str | None:
         """Return the name of the entity."""
-        # Lese den Namen aus der Entity Registry, falls verfügbar
-        try:
-            from homeassistant.helpers import entity_registry as er
-            
-            entity_registry = er.async_get(self.hass)
-            entity_entry = entity_registry.async_get(self.entity_id)
-            
-            if entity_entry and entity_entry.name:
-                return entity_entry.name
-        except Exception:
-            pass
-        
-        # Fallback: Verwende den Standardnamen aus der SensorEntityDescription
-        return self.entity_description.name
+        # Für has_entity_name=True wird der Name aus der Entity Registry gelesen
+        # Der Benutzer kann den Namen über die Home Assistant UI ändern
+        return None  # None = verwende den Namen aus der Entity Registry
 
     @property
     def available(self) -> bool:

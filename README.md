@@ -8,7 +8,7 @@ Eine moderne und benutzerfreundliche Home Assistant Integration für die Überwa
 [![maintainer](https://img.shields.io/badge/maintainer-%40yourusername-blue.svg)](https://github.com/yourusername)
 [![homeassistant](https://img.shields.io/badge/home--assistant-2025.1.0+-blue.svg)](https://home-assistant.io/)
 [![python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/)
-[![version](https://img.shields.io/badge/version-1.1.3-green.svg)](https://github.com/yourusername/planthub/releases)
+[![version](https://img.shields.io/badge/version-1.1.4-green.svg)](https://github.com/yourusername/planthub/releases)
 
 ## 🚀 Features
 
@@ -112,13 +112,14 @@ planthub:
    - Gehe zu "Einstellungen" → "Geräte & Dienste"
    - Klicke auf "+ Integration hinzufügen"
    - Suche nach "PlantHub"
-   - Gib einen Namen für die Integration ein
+   - **Keine Namenseingabe nötig** - der Name wird automatisch gesetzt
    - Klicke auf "Absenden"
 
 2. **Schritt 2: Erste Pflanze hinzufügen**
    - Pflanzen-ID eingeben (z.B. "monstera_001")
    - Optional: Pflanzenname eingeben (z.B. "Monstera Deliciosa")
    - Klicke auf "Absenden"
+   - **Integration wird automatisch als "PlantHub | Pflanzenname" benannt**
 
 ### Weitere Pflanzen hinzufügen
 
@@ -148,6 +149,26 @@ Alle PlantHub Geräte und Entitäten können über die Standard-Home-Assistant-U
 6. Ändere den "Entitätsnamen" und klicke auf "Speichern"
 
 **Hinweis**: Nach dem Umbenennen werden die neuen Namen sofort in der gesamten Home Assistant UI angezeigt, einschließlich Dashboards und Automatisierungen.
+
+### 🎯 **Vollständige Home Assistant UI Integration**
+
+Die PlantHub-Integration ist **vollständig in die Home Assistant UI integriert**:
+
+#### **✅ Automatische Namensgebung:**
+- **Integration-Name**: Wird automatisch als "PlantHub | Pflanzenname" gesetzt
+- **Keine manuelle Eingabe**: Der Benutzer wird nicht nach dem Namen gefragt
+- **Konsistente Benennung**: Alle Integrationen folgen dem gleichen Namensschema
+
+#### **✅ Direkte Pflanzenverwaltung:**
+- **Erste Pflanze**: Wird direkt beim Integration-Setup hinzugefügt
+- **Keine Zwischenschritte**: Direkter Weg von Integration zu Pflanze
+- **Benutzerfreundlich**: Minimaler Konfigurationsaufwand
+
+#### **✅ Standard-Home-Assistant-UI:**
+- **Geräte umbenennen**: Über "Einstellungen" → "Geräte & Dienste" → "Geräte"
+- **Entitäten umbenennen**: Über "Einstellungen" → "Geräte & Dienste" → "Entitäten"
+- **Keine speziellen Menüs**: Alles über die Standard-Home-Assistant-UI
+- **Vertraute Workflows**: Benutzer kennen die Standard-Funktionen
 
 ### Automatische Synchronisation
 

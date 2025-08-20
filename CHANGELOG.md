@@ -1,5 +1,70 @@
 # PlantHub Integration - Changelog
 
+## [1.1.4] - 2024-01-15
+
+### ✨ **Vollständige Home Assistant UI Integration**
+
+#### **Automatische Namensgebung**
+- **Neue Funktion**: Integration-Name wird automatisch als "PlantHub | Pflanzenname" gesetzt
+- **Keine manuelle Eingabe**: Benutzer wird nicht mehr nach dem Namen gefragt
+- **Konsistente Benennung**: Alle Integrationen folgen dem gleichen Namensschema
+- **Benutzerfreundlich**: Minimaler Konfigurationsaufwand
+
+#### **Direkte Pflanzenverwaltung**
+- **Erste Pflanze**: Wird direkt beim Integration-Setup hinzugefügt
+- **Keine Zwischenschritte**: Direkter Weg von Integration zu Pflanze
+- **Vereinfachter Workflow**: Weniger Konfigurationsschritte nötig
+
+#### **Verbesserte UI-Integration**
+- **Standard-Home-Assistant-UI**: Alle Funktionen über die Standard-UI
+- **Geräte umbenennen**: Funktioniert korrekt über "Einstellungen" → "Geräte & Dienste" → "Geräte"
+- **Entitäten umbenennen**: Funktioniert korrekt über "Einstellungen" → "Geräte & Dienste" → "Entitäten"
+- **Keine speziellen Menüs**: Alles über vertraute Home Assistant Workflows
+
+### 🔧 **Technische Verbesserungen**
+
+#### **Config Flow Optimierung**
+- **Vereinfachter erster Schritt**: Keine Namenseingabe mehr nötig
+- **Automatische Titelgenerierung**: `f"PlantHub | {plant_name}"`
+- **Direkte Pflanzenverwaltung**: Erste Pflanze wird sofort hinzugefügt
+- **Verbesserte Übersetzungen**: Klarere Anweisungen und Fehlermeldungen
+
+#### **Sensor-Architektur verbessert**
+- **has_entity_name=True**: Korrekt gesetzt für UI-Umbenennung
+- **Entity Registry Integration**: Namen werden korrekt aus der Entity Registry gelesen
+- **Device Registry Support**: Gerätenamen können über die UI geändert werden
+- **Standard-Home-Assistant-Patterns**: Folgt allen aktuellen Best Practices
+
+### 📚 **Dokumentation**
+
+#### **Neue Anleitungen**
+- Automatische Namensgebung erklärt
+- Direkte Pflanzenverwaltung dokumentiert
+- Vollständige UI-Integration beschrieben
+- Standard-Home-Assistant-Workflows erklärt
+
+#### **Aktualisierte Übersetzungen**
+- Deutsche Übersetzungen verbessert
+- Englische Übersetzungen aktualisiert
+- Klarere Fehlermeldungen
+- Benutzerfreundlichere Beschreibungen
+
+### 🎯 **Benutzerfreundlichkeit**
+
+#### **Vereinfachte Konfiguration**
+- **Weniger Schritte**: Integration-Setup in nur 2 Schritten
+- **Keine manuellen Eingaben**: Automatische Namensgebung
+- **Direkte Pflanzenverwaltung**: Erste Pflanze sofort hinzufügen
+- **Standard-UI**: Alle Funktionen über vertraute Home Assistant Workflows
+
+#### **Verbesserte Benutzerführung**
+- **Klare Anweisungen**: Bessere Beschreibungen in allen Schritten
+- **Automatische Prozesse**: Weniger manuelle Konfiguration nötig
+- **Konsistente Benennung**: Alle Integrationen folgen dem gleichen Schema
+- **Intuitive Workflows**: Standard-Home-Assistant-Patterns
+
+---
+
 ## [1.1.3] - 2024-01-15
 
 ### ✨ **Automatische Synchronisation mit Home Assistant UI**
