@@ -10,6 +10,7 @@ from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.typing import ConfigType
 
 from .const import (
+    CONF_TOKEN,
     DEFAULT_NAME,
     DEVICE_MANUFACTURER,
     DEVICE_MODEL,
@@ -24,13 +25,31 @@ PLATFORMS: list[str] = ["sensor"]
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Set up the PlantHub component."""
+    if DOMAIN not in config:
+        return True
+    
+    # Lade den Token aus der configuration.yaml
+    token = config[DOMAIN].get(CONF_TOKEN)
+    if not token:
+        _LOGGER.error("PlantHub Token nicht in configuration.yaml gefunden")
+        return False
+    
+    # Speichere den Token in hass.data
     hass.data.setdefault(DOMAIN, {})
+    hass.data[DOMAIN][CONF_TOKEN] = token
+    
+    _LOGGER.info("PlantHub Token aus configuration.yaml geladen")
     return True
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up PlantHub from a config entry."""
     _LOGGER.info("Initialisiere PlantHub Integration: %s", entry.data.get("name", DEFAULT_NAME))
+
+    # Prüfe, ob der Token verfügbar ist
+    if CONF_TOKEN not in hass.data.get(DOMAIN, {}):
+        _LOGGER.error("PlantHub Token nicht verfügbar. Bitte konfiguriere den Token in configuration.yaml")
+        return False
 
     # Erstelle den Data Update Coordinator
     from .sensor import PlantHubDataUpdateCoordinator

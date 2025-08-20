@@ -75,14 +75,46 @@ Falls HACS noch nicht installiert ist, folge der [offiziellen HACS-Installations
 
 ## ⚙️ Konfiguration
 
+### Voraussetzung: API Token in configuration.yaml
+
+**Wichtig**: Der API Token muss zuerst in der `configuration.yaml` konfiguriert werden, bevor die Integration über die UI hinzugefügt werden kann.
+
+Füge folgende Zeilen zu deiner `configuration.yaml` hinzu:
+
+```yaml
+# PlantHub Integration Konfiguration
+planthub:
+  token: "dein_api_token_hier_einfuegen"
+```
+
+**Beispiel:**
+```yaml
+# Vollständige configuration.yaml
+homeassistant:
+  name: Home
+  latitude: 52.520008
+  longitude: 13.404954
+  elevation: 0
+  unit_system: metric
+  time_zone: Europe/Berlin
+
+# PlantHub Integration
+planthub:
+  token: "abc123def456ghi789jkl012mno345pqr678stu901vwx234yz"
+
+# Weitere Integrationen...
+```
+
 ### Integration einrichten
 
-1. **Schritt 1: API Token**
-   - Gib deinen PlantHub API Token ein
-   - Der Token muss mindestens 10 Zeichen lang sein
-   - Optional: Gib einen Namen für die Integration ein
+1. **Schritt 1: Integration hinzufügen**
+   - Gehe zu "Einstellungen" → "Geräte & Dienste"
+   - Klicke auf "+ Integration hinzufügen"
+   - Suche nach "PlantHub"
+   - Gib einen Namen für die Integration ein
+   - Klicke auf "Absenden"
 
-2. **Schritt 2: Pflanze hinzufügen**
+2. **Schritt 2: Erste Pflanze hinzufügen**
    - Pflanzen-ID eingeben (z.B. "monstera_001")
    - Optional: Pflanzenname eingeben (z.B. "Monstera Deliciosa")
    - Klicke auf "Absenden"
@@ -92,7 +124,7 @@ Falls HACS noch nicht installiert ist, folge der [offiziellen HACS-Installations
 1. Gehe zu "Einstellungen" → "Geräte & Dienste"
 2. Klicke auf die PlantHub Integration
 3. Klicke auf "Konfigurieren"
-4. Folge dem Config Flow für neue Pflanzen
+4. Folge dem Options Flow für neue Pflanzen
 
 ## 🌐 Webhook-API-Integration
 

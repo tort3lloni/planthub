@@ -3,30 +3,22 @@
     "step": {
       "user": {
         "title": "PlantHub Integration",
-        "description": "Configure the PlantHub integration with your API token.",
+        "description": "Configure the PlantHub integration. The API token must be configured in configuration.yaml under planthub: token:",
         "data": {
-          "name": "Integration Name",
-          "api_token": "API Token"
+          "name": "Integration Name"
         }
       },
-      "add_plants": {
-        "title": "Add Plant",
-        "description": "Add a plant for monitoring.",
+      "add_first_plant": {
+        "title": "Add First Plant",
+        "description": "Add the first plant for monitoring.",
         "data": {
           "plant_id": "Plant ID",
-          "name": "Plant Name (optional)"
-        }
-      },
-      "confirm_plants": {
-        "title": "Confirm Plant",
-        "description": "Plant '{plant_name}' (ID: {plant_id}) has been added. Total: {total_plants} plants.",
-        "data": {
-          "add_another": "Add another plant"
+          "plant_name": "Plant Name (optional)"
         }
       }
     },
     "error": {
-      "invalid_token": "The API token is invalid or too short. Please check your input."
+      "token_not_configured": "The API token was not found in configuration.yaml. Please configure the token under planthub: token: before adding the integration."
     },
     "abort": {
       "already_configured": "This integration is already configured."
@@ -36,11 +28,40 @@
     "step": {
       "init": {
         "title": "PlantHub Options",
-        "description": "Configure advanced options for PlantHub.",
+        "description": "Manage plants and settings for PlantHub.",
+        "data": {
+          "action": "Select Action"
+        },
+        "description_placeholders": {
+          "current_plants": "Current Plants"
+        }
+      },
+      "add_plant": {
+        "title": "Add Plant",
+        "description": "Add a new plant for monitoring.",
+        "data": {
+          "plant_id": "Plant ID",
+          "plant_name": "Plant Name (optional)"
+        }
+      },
+      "remove_plant": {
+        "title": "Remove Plant",
+        "description": "Select a plant to remove.",
+        "data": {
+          "plant_id_to_remove": "Plant to Remove"
+        }
+      },
+      "settings": {
+        "title": "Settings",
+        "description": "Change settings for PlantHub.",
         "data": {
           "scan_interval": "Update Interval (seconds)"
         }
       }
+    },
+    "error": {
+      "plant_id_exists": "A plant with this ID already exists.",
+      "no_plants_to_remove": "There are no plants to remove."
     }
   },
   "entity": {

@@ -3,30 +3,22 @@
     "step": {
       "user": {
         "title": "PlantHub Integration",
-        "description": "Konfiguriere die PlantHub Integration mit deinem API-Token.",
+        "description": "Konfiguriere die PlantHub Integration. Der API-Token muss in der configuration.yaml unter planthub: token: konfiguriert werden.",
         "data": {
-          "name": "Name der Integration",
-          "api_token": "API-Token"
+          "name": "Name der Integration"
         }
       },
-      "add_plants": {
-        "title": "Pflanze hinzufügen",
-        "description": "Füge eine Pflanze zur Überwachung hinzu.",
+      "add_first_plant": {
+        "title": "Erste Pflanze hinzufügen",
+        "description": "Füge die erste Pflanze zur Überwachung hinzu.",
         "data": {
           "plant_id": "Pflanzen-ID",
-          "name": "Name der Pflanze (optional)"
-        }
-      },
-      "confirm_plants": {
-        "title": "Pflanze bestätigen",
-        "description": "Pflanze '{plant_name}' (ID: {plant_id}) wurde hinzugefügt. Gesamt: {total_plants} Pflanzen.",
-        "data": {
-          "add_another": "Weitere Pflanze hinzufügen"
+          "plant_name": "Name der Pflanze (optional)"
         }
       }
     },
     "error": {
-      "invalid_token": "Der API-Token ist ungültig oder zu kurz. Bitte überprüfe deine Eingabe."
+      "token_not_configured": "Der API-Token wurde nicht in der configuration.yaml gefunden. Bitte konfiguriere den Token unter planthub: token: bevor du die Integration hinzufügst."
     },
     "abort": {
       "already_configured": "Diese Integration ist bereits konfiguriert."
@@ -36,11 +28,40 @@
     "step": {
       "init": {
         "title": "PlantHub Optionen",
-        "description": "Konfiguriere erweiterte Optionen für PlantHub.",
+        "description": "Verwalte Pflanzen und Einstellungen für PlantHub.",
+        "data": {
+          "action": "Aktion auswählen"
+        },
+        "description_placeholders": {
+          "current_plants": "Aktuelle Pflanzen"
+        }
+      },
+      "add_plant": {
+        "title": "Pflanze hinzufügen",
+        "description": "Füge eine neue Pflanze zur Überwachung hinzu.",
+        "data": {
+          "plant_id": "Pflanzen-ID",
+          "plant_name": "Name der Pflanze (optional)"
+        }
+      },
+      "remove_plant": {
+        "title": "Pflanze entfernen",
+        "description": "Wähle eine Pflanze aus, die entfernt werden soll.",
+        "data": {
+          "plant_id_to_remove": "Zu entfernende Pflanze"
+        }
+      },
+      "settings": {
+        "title": "Einstellungen",
+        "description": "Ändere die Einstellungen für PlantHub.",
         "data": {
           "scan_interval": "Aktualisierungsintervall (Sekunden)"
         }
       }
+    },
+    "error": {
+      "plant_id_exists": "Eine Pflanze mit dieser ID existiert bereits.",
+      "no_plants_to_remove": "Es sind keine Pflanzen zum Entfernen vorhanden."
     }
   },
   "entity": {

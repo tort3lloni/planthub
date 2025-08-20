@@ -26,6 +26,7 @@ from homeassistant.helpers.update_coordinator import (
 )
 
 from .const import (
+    CONF_TOKEN,
     DEFAULT_NAME,
     DOMAIN,
     STATUS_CRITICAL,
@@ -161,7 +162,9 @@ class PlantHubDataUpdateCoordinator(DataUpdateCoordinator):
         )
         
         self.config_entry = config_entry
-        self.token = config_entry.data["token"]  # Verwende "token"
+        self.hass = hass
+        # Hole den Token aus hass.data statt aus config_entry
+        self.token = hass.data[DOMAIN][CONF_TOKEN]
         self.plants = config_entry.data.get("plants", [])  # Liste aller Pflanzen
 
     async def _async_update_data(self) -> Dict[str, Any]:

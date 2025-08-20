@@ -11,6 +11,7 @@ from homeassistant.data_entry_flow import FlowResult
 from homeassistant.exceptions import HomeAssistantError
 
 from .const import (
+    CONF_TOKEN,
     DEFAULT_NAME,
     DOMAIN,
 )
@@ -38,7 +39,6 @@ class PlantHubConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 data_schema=vol.Schema(
                     {
                         vol.Required("name", default=DEFAULT_NAME): str,
-                        vol.Required("token"): str,
                     }
                 ),
                 description_placeholders={
@@ -46,20 +46,16 @@ class PlantHubConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 },
             )
 
-        # Validiere den API-Token
-        try:
-            await self._validate_token(user_input["token"])
-        except Exception as ex:
-            _LOGGER.error("Token-Validierung fehlgeschlagen: %s", ex)
+        # Prüfe, ob der Token in hass.data verfügbar ist
+        if CONF_TOKEN not in self.hass.data.get(DOMAIN, {}):
             return self.async_show_form(
                 step_id="user",
                 data_schema=vol.Schema(
                     {
                         vol.Required("name", default=user_input["name"]): str,
-                        vol.Required("token"): str,
                     }
                 ),
-                errors={"base": "invalid_token"},
+                errors={"base": "token_not_configured"},
                 description_placeholders={
                     "name": user_input["name"],
                 },
@@ -68,7 +64,6 @@ class PlantHubConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         # Speichere die Konfigurationsdaten
         self._config_data = {
             "name": user_input["name"],
-            "token": user_input["token"],  # Speichere als "token"
             "scan_interval": 300,  # Standard: 5 Minuten
         }
         
@@ -115,15 +110,6 @@ class PlantHubConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             title=title,
             data=self._config_data,
         )
-
-    async def _validate_token(self, token: str) -> None:
-        """Validiere den API-Token."""
-        # Hier könnte eine echte API-Validierung implementiert werden
-        # Für jetzt prüfen wir nur, dass der Token nicht leer ist
-        if not token or len(token.strip()) < 10:
-            raise ValueError("Token zu kurz oder leer")
-
-        _LOGGER.info("API-Token validiert")
 
     @staticmethod
     @callback
