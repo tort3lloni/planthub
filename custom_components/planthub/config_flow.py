@@ -202,12 +202,12 @@ class PlantHubOptionsFlow(config_entries.OptionsFlow):
             return self.async_show_form(
                 step_id="remove_plant",
                 data_schema=vol.Schema({
-                    vol.Required("plant_id_to_remove"): vol.In(plant_options)
+                    vol.Required("plant_id"): vol.In(plant_options)
                 })
             )
 
         # Entferne die ausgewählte Pflanze
-        plant_id_to_remove = user_input["plant_id_to_remove"]
+        plant_id_to_remove = user_input["plant_id"]
         new_data = self.config_entry.data.copy()
         new_data["plants"] = [p for p in new_data["plants"] if p["plant_id"] != plant_id_to_remove]
         

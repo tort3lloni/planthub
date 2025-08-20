@@ -1,5 +1,29 @@
 # PlantHub Integration - Changelog
 
+## [1.1.6] - 2024-01-15
+
+### 🔧 **Zusätzliche Konsistenzverbesserungen**
+
+#### **Remove Plant Funktion korrigiert**
+- **Problem**: Inkonsistente Verwendung von `plant_id_to_remove` vs `plant_id`
+- **Ursache**: Übersetzungen verwendeten `plant_id`, aber Code verwendete `plant_id_to_remove`
+- **Lösung**: Einheitliche Verwendung von `plant_id` in allen Funktionen
+- **Status**: ✅ Behoben
+
+#### **Verbesserte Konsistenz**
+- **Schema-Definitionen**: Alle verwenden jetzt `plant_id`
+- **Übersetzungen**: Vollständig konsistent mit dem Code
+- **Benutzerfreundlichkeit**: Einheitliche Benennung in der gesamten Integration
+
+### 🎯 **Technische Verbesserungen**
+
+#### **Options Flow Optimierung**
+- **remove_plant**: Verwendet jetzt `plant_id` statt `plant_id_to_remove`
+- **Konsistente APIs**: Alle Pflanzenfunktionen verwenden die gleichen Feldnamen
+- **Bessere Wartbarkeit**: Einheitliche Namenskonventionen
+
+---
+
 ## [1.1.5] - 2024-01-15
 
 ### 🐛 **Bugfix: Config Flow Fehler behoben**
