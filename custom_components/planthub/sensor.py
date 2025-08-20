@@ -113,34 +113,35 @@ async def async_setup_entry(
         "coordinator"
     ]
     
-    # Erstelle Sensor-Entitäten für die konfigurierte Pflanze
+    # Erstelle Sensor-Entitäten für alle konfigurierten Pflanzen
     entities = []
     
-    plant_id = coordinator.plant_id
-    plant_name = coordinator.plant_name
-    
-    # Status-Sensor
-    entities.append(PlantHubStatusSensor(coordinator, plant_id, plant_name))
-    
-    # Bodenfeuchtigkeit-Sensor
-    entities.append(PlantHubSoilMoistureSensor(coordinator, plant_id, plant_name))
-    
-    # Lufttemperatur-Sensor
-    entities.append(PlantHubAirTemperatureSensor(coordinator, plant_id, plant_name))
-    
-    # Luftfeuchtigkeit-Sensor
-    entities.append(PlantHubAirHumiditySensor(coordinator, plant_id, plant_name))
-    
-    # Helligkeit-Sensor
-    entities.append(PlantHubLightSensor(coordinator, plant_id, plant_name))
-    
-    # Versteckte plant_id Entität (nur für interne Zwecke)
-    entities.append(PlantHubPlantIdSensor(coordinator, plant_id, plant_name))
+    for plant_config in coordinator.plants:
+        plant_id = plant_config["plant_id"]
+        plant_name = plant_config["name"]
+        
+        # Status-Sensor
+        entities.append(PlantHubStatusSensor(coordinator, plant_id, plant_name))
+        
+        # Bodenfeuchtigkeit-Sensor
+        entities.append(PlantHubSoilMoistureSensor(coordinator, plant_id, plant_name))
+        
+        # Lufttemperatur-Sensor
+        entities.append(PlantHubAirTemperatureSensor(coordinator, plant_id, plant_name))
+        
+        # Luftfeuchtigkeit-Sensor
+        entities.append(PlantHubAirHumiditySensor(coordinator, plant_id, plant_name))
+        
+        # Helligkeit-Sensor
+        entities.append(PlantHubLightSensor(coordinator, plant_id, plant_name))
+        
+        # Versteckte plant_id Entität (nur für interne Zwecke)
+        entities.append(PlantHubPlantIdSensor(coordinator, plant_id, plant_name))
     
     async_add_entities(entities)
     
-    # Verstecke plant_id Entität
-    await _hide_plant_id_entities(hass, [plant_id])
+    # Verstecke plant_id Entitäten
+    await _hide_plant_id_entities(hass, [p["plant_id"] for p in coordinator.plants])
 
 
 class PlantHubDataUpdateCoordinator(DataUpdateCoordinator):
@@ -160,38 +161,46 @@ class PlantHubDataUpdateCoordinator(DataUpdateCoordinator):
         )
         
         self.config_entry = config_entry
-        self.api_token = config_entry.data["api_token"]
-        self.plant_id = config_entry.data["plant_id"]
-        self.plant_name = config_entry.data.get("plant_name", self.plant_id)
+        self.api_token = config_entry.data["token"]  # Verwende "token" statt "api_token"
+        self.plants = config_entry.data.get("plants", [])  # Liste aller Pflanzen
 
     async def _async_update_data(self) -> Dict[str, Any]:
         """Update data from PlantHub API."""
         try:
             from .webhook import PlantHubWebhook
             
+            all_plants_data = {}
+            
             async with PlantHubWebhook(self.hass, self.api_token) as webhook:
-                # Hole Daten für die spezifische Pflanze
-                plant_data = await webhook.fetch_plant_data(self.plant_id)
+                # Hole Daten für alle konfigurierten Pflanzen
+                for plant_config in self.plants:
+                    plant_id = plant_config["plant_id"]
+                    try:
+                        plant_data = await webhook.fetch_plant_data(plant_id)
+                        all_plants_data[plant_id] = plant_data
+                    except Exception as e:
+                        _LOGGER.error("Fehler beim Laden der Daten für Pflanze %s: %s", plant_id, e)
+                        all_plants_data[plant_id] = None
                 
                 return {
-                    "plant": plant_data,
+                    "plants": all_plants_data,
                     "last_update": datetime.now().isoformat(),
                 }
                 
         except Exception as e:
-            _LOGGER.error("Fehler beim Aktualisieren der PlantHub-Daten für Pflanze %s: %s", self.plant_id, e)
+            _LOGGER.error("Fehler beim Aktualisieren der PlantHub-Daten: %s", e)
             return {
-                "plant": None,
+                "plants": {},
                 "last_update": datetime.now().isoformat(),
                 "error": str(e),
             }
 
-    def get_plant_data(self) -> Optional[Dict[str, Any]]:
-        """Hole Daten für die konfigurierte Pflanze."""
-        if not self.data or "plant" not in self.data:
+    def get_plant_data(self, plant_id: str) -> Optional[Dict[str, Any]]:
+        """Hole Daten für eine spezifische Pflanze."""
+        if not self.data or "plants" not in self.data:
             return None
             
-        return self.data["plant"]
+        return self.data["plants"].get(plant_id)
 
 
 class BasePlantHubSensor(CoordinatorEntity, SensorEntity):
@@ -214,8 +223,11 @@ class BasePlantHubSensor(CoordinatorEntity, SensorEntity):
         # Verwende vollständige SensorEntityDescription
         self.entity_description = SENSOR_DESCRIPTIONS[sensor_type]
         
-        # Erstelle eindeutige Entity-ID
-        self._attr_unique_id = f"{plant_id}_{sensor_type}"
+        # Erstelle eindeutige Entity-ID basierend auf plant_id und description.key
+        self._attr_unique_id = f"{plant_id}_{self.entity_description.key}"
+        
+        # Überschreibe den Namen für benutzerfreundliche Entity-IDs
+        self._attr_name = f"{plant_id} {self.entity_description.name}"
         
         # Verknüpfe mit Device Registry
         self._attr_device_info = {
@@ -232,13 +244,13 @@ class BasePlantHubSensor(CoordinatorEntity, SensorEntity):
         return (
             self.coordinator.last_update_success
             and self.coordinator.data is not None
-            and "plant" in self.coordinator.data
+            and "plants" in self.coordinator.data
         )
 
     @property
     def extra_state_attributes(self) -> Dict[str, Any]:
         """Return entity specific state attributes."""
-        plant_data = self.coordinator.get_plant_data()
+        plant_data = self.coordinator.get_plant_data(self.plant_id)
         if not plant_data:
             return {}
             
@@ -264,7 +276,7 @@ class PlantHubStatusSensor(BasePlantHubSensor):
     @property
     def native_value(self) -> StateType:
         """Return the status of the plant."""
-        plant_data = self.coordinator.get_plant_data()
+        plant_data = self.coordinator.get_plant_data(self.plant_id)
         if not plant_data:
             return STATUS_UNKNOWN
             
@@ -283,7 +295,7 @@ class PlantHubStatusSensor(BasePlantHubSensor):
     def extra_state_attributes(self) -> Dict[str, Any]:
         """Return entity specific state attributes."""
         attrs = super().extra_state_attributes
-        plant_data = self.coordinator.get_plant_data()
+        plant_data = self.coordinator.get_plant_data(self.plant_id)
         if plant_data:
             attrs.update({
                 "soil_moisture": plant_data.get("soil_moisture"),
@@ -309,7 +321,7 @@ class PlantHubSoilMoistureSensor(BasePlantHubSensor):
     @property
     def native_value(self) -> StateType:
         """Return the soil moisture percentage."""
-        plant_data = self.coordinator.get_plant_data()
+        plant_data = self.coordinator.get_plant_data(self.plant_id)
         if not plant_data:
             return None
         return plant_data.get("soil_moisture")
@@ -330,7 +342,7 @@ class PlantHubAirTemperatureSensor(BasePlantHubSensor):
     @property
     def native_value(self) -> StateType:
         """Return the air temperature in Celsius."""
-        plant_data = self.coordinator.get_plant_data()
+        plant_data = self.coordinator.get_plant_data(self.plant_id)
         if not plant_data:
             return None
         return plant_data.get("air_temperature")
@@ -351,7 +363,7 @@ class PlantHubAirHumiditySensor(BasePlantHubSensor):
     @property
     def native_value(self) -> StateType:
         """Return the air humidity percentage."""
-        plant_data = self.coordinator.get_plant_data()
+        plant_data = self.coordinator.get_plant_data(self.plant_id)
         if not plant_data:
             return None
         return plant_data.get("air_humidity")
@@ -372,7 +384,7 @@ class PlantHubLightSensor(BasePlantHubSensor):
     @property
     def native_value(self) -> StateType:
         """Return the light level in lux."""
-        plant_data = self.coordinator.get_plant_data()
+        plant_data = self.coordinator.get_plant_data(self.plant_id)
         if not plant_data:
             return None
         return plant_data.get("light")

@@ -43,7 +43,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         "coordinator": coordinator,
     }
 
-    # Erstelle Device Registry Einträge für alle Pflanzen
+    # Erstelle Device Registry Einträge für alle konfigurierten Pflanzen
     await _create_device_registry_entries(hass, entry, coordinator)
 
     # Setze die Plattformen auf
@@ -84,27 +84,28 @@ async def async_reload_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
 async def _create_device_registry_entries(
     hass: HomeAssistant, entry: ConfigEntry, coordinator: Any
 ) -> None:
-    """Erstelle Device Registry Eintrag für die konfigurierte Pflanze."""
+    """Erstelle Device Registry Einträge für alle konfigurierten Pflanzen."""
     try:
         device_registry = dr.async_get(hass)
         
-        plant_id = coordinator.plant_id
-        plant_name = coordinator.plant_name
-        
-        # Erstelle oder aktualisiere den Device Registry Eintrag
-        device_registry.async_get_or_create(
-            config_entry_id=entry.entry_id,
-            identifiers={(DOMAIN, plant_id)},
-            name=plant_name,
-            manufacturer=DEVICE_MANUFACTURER,
-            model=DEVICE_MODEL,
-            sw_version=DEVICE_SW_VERSION,
-        )
-        
-        _LOGGER.debug("Device Registry Eintrag erstellt/aktualisiert für Pflanze: %s", plant_id)
+        for plant_config in coordinator.plants:
+            plant_id = plant_config["plant_id"]
+            plant_name = plant_config["name"]
+            
+            # Erstelle oder aktualisiere den Device Registry Eintrag
+            device_registry.async_get_or_create(
+                config_entry_id=entry.entry_id,
+                identifiers={(DOMAIN, plant_id)},
+                name=plant_name,
+                manufacturer=DEVICE_MANUFACTURER,
+                model=DEVICE_MODEL,
+                sw_version=DEVICE_SW_VERSION,
+            )
+            
+            _LOGGER.debug("Device Registry Eintrag erstellt/aktualisiert für Pflanze: %s", plant_id)
         
     except Exception as e:
-        _LOGGER.error("Fehler beim Erstellen des Device Registry Eintrags: %s", e)
+        _LOGGER.error("Fehler beim Erstellen der Device Registry Einträge: %s", e)
 
 
 async def _remove_device_registry_entries(
