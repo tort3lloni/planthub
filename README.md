@@ -1,5 +1,7 @@
 # PlantHub - Home Assistant Integration
 
+Disclaimer: Komplett KI erstellt, ich spiele hier nur etwas rum.
+
 Eine moderne und benutzerfreundliche Home Assistant Integration für die Überwachung von Pflanzen mit Webhook-API-Integration.
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/custom-components/hacs)
