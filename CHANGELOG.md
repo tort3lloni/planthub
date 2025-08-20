@@ -1,5 +1,91 @@
 # PlantHub Integration - Changelog
 
+## [1.1.3] - 2024-01-15
+
+### ✨ **Automatische Synchronisation mit Home Assistant UI**
+
+#### **Geräte und Entitäten automatisch entfernen**
+- **Neue Funktion**: Automatische Synchronisation zwischen Home Assistant UI und PlantHub-Konfiguration
+- **Device Registry Listener**: Überwacht das Entfernen von Geräten über die UI
+- **Entity Registry Listener**: Überwacht das Entfernen von Entitäten über die UI
+- **Automatische Bereinigung**: Entfernte Pflanzen werden automatisch aus der Konfiguration gelöscht
+
+#### **Intelligente Synchronisation**
+- **Gerät entfernen**: Pflanze wird automatisch aus der PlantHub-Konfiguration entfernt
+- **Entität entfernen**: Zugehörige Pflanze wird automatisch aus der Konfiguration entfernt
+- **Coordinator-Update**: PlantHubDataUpdateCoordinator wird automatisch aktualisiert
+- **Saubere Bereinigung**: Alle zugehörigen Daten werden konsistent entfernt
+
+### 🔧 **Technische Verbesserungen**
+
+#### **Registry Listener Integration**
+- Neue `_register_device_registry_listener()` Funktion für Device Registry Überwachung
+- Neue `_register_entity_registry_listener()` Funktion für Entity Registry Überwachung
+- Automatische Registrierung und Entfernung der Listener beim Setup/Unload
+- Robuste Fehlerbehandlung für alle Listener-Operationen
+
+#### **Konfigurationssynchronisation**
+- Neue `_remove_plant_from_config()` Funktion für automatische Pflanzenentfernung
+- Neue `_update_plant_config_from_entity()` Funktion für Entitäts-basierte Updates
+- Automatische Aktualisierung der `config_entry.data`
+- Synchronisation mit dem `PlantHubDataUpdateCoordinator`
+
+### 📚 **Dokumentation**
+
+#### **Neue Anleitungen**
+- Schritt-für-Schritt-Anleitung zum Entfernen von Geräten über die UI
+- Detaillierte Anweisungen zum Entfernen von Entitäten über die UI
+- Erklärung der automatischen Synchronisation
+- Vorteile der neuen Funktionalität
+
+### 🎯 **Benutzerfreundlichkeit**
+
+#### **Vereinfachte Verwaltung**
+- **Keine manuellen Schritte**: Entfernen über die Standard-Home-Assistant-UI
+- **Automatische Synchronisation**: UI und Konfiguration bleiben immer konsistent
+- **Intelligente Bereinigung**: Alle zugehörigen Daten werden automatisch entfernt
+- **Keine Inkonsistenzen**: PlantHub-Integration bleibt immer synchron mit der UI
+
+---
+
+## [1.1.2] - 2024-01-15
+
+### ✨ **Verbesserte Umbenennungsfunktionalität**
+
+#### **Geräte und Entitäten über Home Assistant UI umbenennen**
+- **Neue Funktion**: Alle PlantHub Geräte und Entitäten können über die Standard-Home-Assistant-UI umbenannt werden
+- **Geräte umbenennen**: Über "Einstellungen" → "Geräte & Dienste" → "Geräte"
+- **Entitäten umbenennen**: Über "Einstellungen" → "Geräte & Dienste" → "Entitäten"
+- **Sofortige Aktualisierung**: Neue Namen werden sofort in der gesamten UI angezeigt
+
+#### **Flexible Namensverwaltung**
+- **Keine festen Namen**: Geräte- und Entitätsnamen sind nicht mehr fest codiert
+- **Entity Registry Integration**: Namen werden dynamisch aus der Entity Registry gelesen
+- **Device Registry Support**: Gerätenamen können über die Device Registry UI geändert werden
+- **has_entity_name=True**: Alle Sensoren unterstützen die Standard-Home-Assistant-Umbenennung
+
+### 🔧 **Technische Verbesserungen**
+
+#### **Sensor-Architektur überarbeitet**
+- Neue `name` Property in `BasePlantHubSensor` für dynamische Namensverwaltung
+- Integration mit Home Assistant Entity Registry für Umbenennungen
+- Fallback auf Standardnamen aus `SensorEntityDescription`
+- Verbesserte Fehlerbehandlung bei Registry-Zugriffen
+
+#### **Device Registry Optimierung**
+- Geräte werden mit Standardnamen erstellt, können aber über UI geändert werden
+- Keine festen Namen mehr, die die Umbenennung blockieren
+- Vollständige Integration mit Home Assistant Device Registry UI
+
+### 📚 **Dokumentation**
+
+#### **Neue Anleitungen**
+- Schritt-für-Schritt-Anleitung zum Umbenennen von Geräten
+- Detaillierte Anweisungen zum Umbenennen von Entitäten
+- Hinweise zur sofortigen Aktualisierung in der gesamten UI
+
+---
+
 ## [1.1.1] - 2024-01-15
 
 ### 🔧 **Home Assistant 2025 Kompatibilität**

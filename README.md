@@ -8,7 +8,7 @@ Eine moderne und benutzerfreundliche Home Assistant Integration für die Überwa
 [![maintainer](https://img.shields.io/badge/maintainer-%40yourusername-blue.svg)](https://github.com/yourusername)
 [![homeassistant](https://img.shields.io/badge/home--assistant-2025.1.0+-blue.svg)](https://home-assistant.io/)
 [![python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/)
-[![version](https://img.shields.io/badge/version-1.1.1-green.svg)](https://github.com/yourusername/planthub/releases)
+[![version](https://img.shields.io/badge/version-1.1.3-green.svg)](https://github.com/yourusername/planthub/releases)
 
 ## 🚀 Features
 
@@ -126,6 +126,48 @@ planthub:
 2. Klicke auf die PlantHub Integration
 3. Klicke auf "Konfigurieren"
 4. Folge dem Options Flow für neue Pflanzen
+
+### Geräte und Entitäten umbenennen
+
+Alle PlantHub Geräte und Entitäten können über die Standard-Home-Assistant-UI umbenannt werden:
+
+#### **Geräte umbenennen:**
+1. Gehe zu "Einstellungen" → "Geräte & Dienste"
+2. Klicke auf "Geräte"
+3. Suche nach deinem PlantHub Gerät
+4. Klicke auf das Gerät
+5. Klicke auf "Einstellungen" (Zahnrad-Symbol)
+6. Ändere den "Gerätenamen" und klicke auf "Speichern"
+
+#### **Entitäten umbenennen:**
+1. Gehe zu "Einstellungen" → "Geräte & Dienste"
+2. Klicke auf "Entitäten"
+3. Suche nach der PlantHub Entität (z.B. "sensor.monstera_001_soil_moisture")
+4. Klicke auf die Entität
+5. Klicke auf "Einstellungen" (Zahnrad-Symbol)
+6. Ändere den "Entitätsnamen" und klicke auf "Speichern"
+
+**Hinweis**: Nach dem Umbenennen werden die neuen Namen sofort in der gesamten Home Assistant UI angezeigt, einschließlich Dashboards und Automatisierungen.
+
+### Automatische Synchronisation
+
+Die PlantHub-Integration synchronisiert sich automatisch mit der Home Assistant UI:
+
+#### **Geräte entfernen:**
+- **Über UI**: Gehe zu "Einstellungen" → "Geräte & Dienste" → "Geräte" → Wähle PlantHub-Gerät → "Entfernen"
+- **Automatisch**: Die Pflanze wird automatisch aus der PlantHub-Konfiguration entfernt
+- **Synchronisation**: Alle zugehörigen Entitäten werden ebenfalls entfernt
+
+#### **Entitäten entfernen:**
+- **Über UI**: Gehe zu "Einstellungen" → "Geräte & Dienste" → "Entitäten" → Wähle PlantHub-Entität → "Entfernen"
+- **Automatisch**: Die entsprechende Pflanze wird aus der Konfiguration entfernt
+- **Synchronisation**: Das zugehörige Gerät wird ebenfalls entfernt
+
+#### **Vorteile der automatischen Synchronisation:**
+- ✅ **Keine Inkonsistenzen**: UI und Konfiguration bleiben immer synchron
+- ✅ **Einfache Verwaltung**: Entfernen über die Standard-Home-Assistant-UI
+- ✅ **Automatische Updates**: Coordinator wird automatisch aktualisiert
+- ✅ **Saubere Bereinigung**: Alle zugehörigen Daten werden entfernt
 
 ## 🌐 Webhook-API-Integration
 

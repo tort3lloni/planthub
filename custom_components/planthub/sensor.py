@@ -229,17 +229,35 @@ class BasePlantHubSensor(CoordinatorEntity, SensorEntity):
         # Erstelle eindeutige Entity-ID basierend auf plant_id und description.key
         self._attr_unique_id = f"{plant_id}_{self.entity_description.key}"
         
-        # Überschreibe den Namen für benutzerfreundliche Entity-IDs
-        self._attr_name = f"{plant_name} {self.entity_description.name}"
+        # Der Name wird aus der Entity Registry gelesen, nicht fest gesetzt
+        # has_entity_name=True ist bereits in der SensorEntityDescription gesetzt
         
         # Verknüpfe mit Device Registry
         self._attr_device_info = {
             "identifiers": {(DOMAIN, plant_id)},
-            "name": plant_name,
+            "name": plant_name,  # Standardname, kann über Device Registry UI geändert werden
             "manufacturer": "PlantHub",
             "model": "PlantHub Sensor",
             "sw_version": "1.0.0",
         }
+
+    @property
+    def name(self) -> str | None:
+        """Return the name of the entity."""
+        # Lese den Namen aus der Entity Registry, falls verfügbar
+        try:
+            from homeassistant.helpers import entity_registry as er
+            
+            entity_registry = er.async_get(self.hass)
+            entity_entry = entity_registry.async_get(self.entity_id)
+            
+            if entity_entry and entity_entry.name:
+                return entity_entry.name
+        except Exception:
+            pass
+        
+        # Fallback: Verwende den Standardnamen aus der SensorEntityDescription
+        return self.entity_description.name
 
     @property
     def available(self) -> bool:
