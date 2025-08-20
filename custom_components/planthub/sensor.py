@@ -116,6 +116,15 @@ async def async_setup_entry(
     # Erstelle Sensor-Entitäten für jede Pflanze
     entities = []
     
+    # Wenn keine Pflanzen vorhanden sind, verwende Standard-Pflanzen
+    if not coordinator.plant_ids:
+        _LOGGER.info("Keine Pflanzen konfiguriert, verwende Standard-Pflanzen")
+        coordinator.plant_ids = ["plant_1", "plant_2"]
+        coordinator._plant_names = {
+            "plant_1": "Pflanze 1",
+            "plant_2": "Pflanze 2"
+        }
+    
     for plant_id in coordinator.plant_ids:
         plant_name = coordinator.get_plant_name(plant_id)
         
@@ -171,6 +180,15 @@ class PlantHubDataUpdateCoordinator(DataUpdateCoordinator):
                 plant_name = plant_config.get("name", plant_id)
                 if plant_id:
                     self._plant_names[plant_id] = plant_name
+        
+        # Wenn keine Pflanzen konfiguriert sind, verwende Standard-Pflanzen
+        if not self.plant_ids:
+            _LOGGER.info("Keine Pflanzen konfiguriert, verwende Standard-Pflanzen")
+            self.plant_ids = ["plant_1", "plant_2"]
+            self._plant_names = {
+                "plant_1": "Pflanze 1",
+                "plant_2": "Pflanze 2"
+            }
 
     async def _async_update_data(self) -> Dict[str, Any]:
         """Update data from PlantHub API."""
@@ -186,7 +204,7 @@ class PlantHubDataUpdateCoordinator(DataUpdateCoordinator):
                     plant_id = plant_data.get("plant_id")
                     plant_name = plant_data.get("plant_name", plant_id)
                     if plant_id:
-                        self._plant_names[plant_id] = plant_name
+                        self._plant_names[plant_id] = plant_id
                 
                 return {
                     "plants": all_plants_data,
@@ -195,8 +213,31 @@ class PlantHubDataUpdateCoordinator(DataUpdateCoordinator):
                 
         except Exception as e:
             _LOGGER.error("Fehler beim Aktualisieren der PlantHub-Daten: %s", e)
+            # Fallback: Dummy-Daten für Standard-Pflanzen
+            if not self.plant_ids:
+                self.plant_ids = ["plant_1", "plant_2"]
+                self._plant_names = {
+                    "plant_1": "Pflanze 1",
+                    "plant_2": "Pflanze 2"
+                }
+            
+            # Erstelle Dummy-Daten für alle Pflanzen
+            dummy_data = []
+            for plant_id in self.plant_ids:
+                plant_name = self._plant_names.get(plant_id, plant_id)
+                dummy_data.append({
+                    "plant_id": plant_id,
+                    "plant_name": plant_name,
+                    "status": "healthy",
+                    "soil_moisture": 75.0,
+                    "air_temperature": 22.5,
+                    "air_humidity": 65.0,
+                    "light": 800.0,
+                    "last_update": datetime.now().isoformat()
+                })
+            
             return {
-                "plants": [],
+                "plants": dummy_data,
                 "last_update": datetime.now().isoformat(),
                 "error": str(e),
             }
