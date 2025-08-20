@@ -161,7 +161,7 @@ class PlantHubDataUpdateCoordinator(DataUpdateCoordinator):
         )
         
         self.config_entry = config_entry
-        self.api_token = config_entry.data["token"]  # Verwende "token" statt "api_token"
+        self.token = config_entry.data["token"]  # Verwende "token"
         self.plants = config_entry.data.get("plants", [])  # Liste aller Pflanzen
 
     async def _async_update_data(self) -> Dict[str, Any]:
@@ -171,7 +171,7 @@ class PlantHubDataUpdateCoordinator(DataUpdateCoordinator):
             
             all_plants_data = {}
             
-            async with PlantHubWebhook(self.hass, self.api_token) as webhook:
+            async with PlantHubWebhook(self.hass, self.token) as webhook:
                 # Hole Daten für alle konfigurierten Pflanzen
                 for plant_config in self.plants:
                     plant_id = plant_config["plant_id"]

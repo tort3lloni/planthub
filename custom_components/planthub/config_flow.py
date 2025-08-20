@@ -38,7 +38,7 @@ class PlantHubConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 data_schema=vol.Schema(
                     {
                         vol.Required("name", default=DEFAULT_NAME): str,
-                        vol.Required("api_token"): str,
+                        vol.Required("token"): str,
                     }
                 ),
                 description_placeholders={
@@ -48,7 +48,7 @@ class PlantHubConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         # Validiere den API-Token
         try:
-            await self._validate_token(user_input["api_token"])
+            await self._validate_token(user_input["token"])
         except Exception as ex:
             _LOGGER.error("Token-Validierung fehlgeschlagen: %s", ex)
             return self.async_show_form(
@@ -56,7 +56,7 @@ class PlantHubConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 data_schema=vol.Schema(
                     {
                         vol.Required("name", default=user_input["name"]): str,
-                        vol.Required("api_token"): str,
+                        vol.Required("token"): str,
                     }
                 ),
                 errors={"base": "invalid_token"},
@@ -68,7 +68,7 @@ class PlantHubConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         # Speichere die Konfigurationsdaten
         self._config_data = {
             "name": user_input["name"],
-            "token": user_input["api_token"],  # Speichere als "token"
+            "token": user_input["token"],  # Speichere als "token"
             "scan_interval": 300,  # Standard: 5 Minuten
         }
         

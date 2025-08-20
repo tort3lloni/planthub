@@ -70,20 +70,20 @@ class PlantHubWebhook:
     def __init__(
         self, 
         hass: HomeAssistant, 
-        api_token: str,
+        token: str,
         http_client: Optional[HttpClientProtocol] = None,
         base_url: Optional[str] = None,
         timeout: Optional[int] = None
     ) -> None:
         """Initialize the webhook handler."""
         self.hass = hass
-        self.api_token = api_token
+        self.token = token
         self._http_client = http_client
         self._base_url = base_url or WEBHOOK_BASE_URL
         self._timeout = timeout or WEBHOOK_TIMEOUT
         self.session: Optional[aiohttp.ClientSession] = None
         self._headers = {
-            "Authorization": f"Bearer {api_token}",
+            "Authorization": f"Bearer {token}",
             "Content-Type": "application/json",
             "User-Agent": "HomeAssistant/PlantHub/1.0.0",
         }
@@ -122,9 +122,9 @@ class PlantHubWebhook:
         _LOGGER.debug("Webhook Endpoint: %s", WEBHOOK_ENDPOINT)
         _LOGGER.debug("Final URL: %s", url)
         _LOGGER.debug("Request Body: %s", request_body)
-        _LOGGER.debug("API Token: %s...", self.api_token[:10] + "..." if len(self.api_token) > 10 else "***")
+        _LOGGER.debug("API Token: %s...", self.token[:10] + "..." if len(self.token) > 10 else "***")
         _LOGGER.debug("Headers: %s", {k: v for k, v in self._headers.items() if k != "Authorization"})
-        _LOGGER.debug("Authorization: Bearer %s...", self.api_token[:10] + "..." if len(self.api_token) > 10 else "***")
+        _LOGGER.debug("Authorization: Bearer %s...", self.token[:10] + "..." if len(self.token) > 10 else "***")
         _LOGGER.debug("Timeout: %d Sekunden", self._timeout)
         _LOGGER.debug("==================================")
         
