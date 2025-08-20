@@ -80,8 +80,8 @@ SENSOR_DESCRIPTIONS = {
         has_entity_name=True,
         entity_registry_visible_default=True,
     ),
-    "light": SensorEntityDescription(
-        key="light",
+    "illuminance": SensorEntityDescription(
+        key="illuminance",
         name="Helligkeit",
         icon="mdi:brightness-6",
         device_class=SensorDeviceClass.ILLUMINANCE,
@@ -133,7 +133,7 @@ async def async_setup_entry(
         entities.append(PlantHubAirHumiditySensor(coordinator, plant_id, plant_name))
         
         # Helligkeit-Sensor
-        entities.append(PlantHubLightSensor(coordinator, plant_id, plant_name))
+        entities.append(PlantHubIlluminanceSensor(coordinator, plant_id, plant_name))
         
         # Versteckte plant_id Entität (nur für interne Zwecke)
         entities.append(PlantHubPlantIdSensor(coordinator, plant_id, plant_name))
@@ -227,7 +227,7 @@ class BasePlantHubSensor(CoordinatorEntity, SensorEntity):
         self._attr_unique_id = f"{plant_id}_{self.entity_description.key}"
         
         # Überschreibe den Namen für benutzerfreundliche Entity-IDs
-        self._attr_name = f"{plant_id} {self.entity_description.name}"
+        self._attr_name = f"{plant_name} {self.entity_description.name}"
         
         # Verknüpfe mit Device Registry
         self._attr_device_info = {
@@ -301,7 +301,7 @@ class PlantHubStatusSensor(BasePlantHubSensor):
                 "soil_moisture": plant_data.get("soil_moisture"),
                 "air_temperature": plant_data.get("air_temperature"),
                 "air_humidity": plant_data.get("air_humidity"),
-                "light": plant_data.get("light"),
+                "illuminance": plant_data.get("illuminance"),
             })
         return attrs
 
@@ -369,7 +369,7 @@ class PlantHubAirHumiditySensor(BasePlantHubSensor):
         return plant_data.get("air_humidity")
 
 
-class PlantHubLightSensor(BasePlantHubSensor):
+class PlantHubIlluminanceSensor(BasePlantHubSensor):
     """Helligkeit-Sensor für PlantHub Pflanzen."""
 
     def __init__(
@@ -379,7 +379,7 @@ class PlantHubLightSensor(BasePlantHubSensor):
         plant_name: str,
     ) -> None:
         """Initialize the light sensor."""
-        super().__init__(coordinator, plant_id, plant_name, "light")
+        super().__init__(coordinator, plant_id, plant_name, "illuminance")
 
     @property
     def native_value(self) -> StateType:
@@ -387,7 +387,7 @@ class PlantHubLightSensor(BasePlantHubSensor):
         plant_data = self.coordinator.get_plant_data(self.plant_id)
         if not plant_data:
             return None
-        return plant_data.get("light")
+        return plant_data.get("illuminance")
 
 
 class PlantHubPlantIdSensor(BasePlantHubSensor):

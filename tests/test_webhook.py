@@ -89,7 +89,7 @@ async def test_fetch_plant_data_success(mock_hass, api_token):
         "soil_moisture": 75.5,
         "air_temperature": 22.3,
         "air_humidity": 65.0,
-        "light": 1200.0,
+        "illuminance": 1200.0,
         "last_updated": "2024-01-01T12:00:00Z"
     })
     
@@ -102,7 +102,7 @@ async def test_fetch_plant_data_success(mock_hass, api_token):
     assert result["soil_moisture"] == 75.5
     assert result["air_temperature"] == 22.3
     assert result["air_humidity"] == 65.0
-    assert result["light"] == 1200.0
+    assert result["illuminance"] == 1200.0
 
 
 @pytest.mark.asyncio
@@ -171,7 +171,7 @@ async def test_fetch_all_plants_data_success(mock_hass, api_token):
                 "soil_moisture": 80.0,
                 "air_temperature": 20.0,
                 "air_humidity": 70.0,
-                "light": 1000.0
+                "illuminance": 1000.0
             },
             {
                 "id": "plant_002",
@@ -179,7 +179,7 @@ async def test_fetch_all_plants_data_success(mock_hass, api_token):
                 "soil_moisture": 60.0,
                 "air_temperature": 25.0,
                 "air_humidity": 60.0,
-                "light": 1500.0
+                "illuminance": 1500.0
             }
         ]
     })
@@ -213,7 +213,7 @@ async def test_data_normalization_with_fallback(mock_hass, api_token):
     assert result["soil_moisture"] is None
     assert result["air_temperature"] is None
     assert result["air_humidity"] is None
-    assert result["light"] is None
+    assert result["illuminance"] is None
     assert "last_update" in result
 
 
@@ -226,7 +226,7 @@ async def test_data_validation_ranges(mock_hass, api_token):
         "soil_moisture": 150.0,  # Invalid: > 100
         "air_humidity": -10.0,   # Invalid: < 0
         "air_temperature": 150.0, # Invalid: > 100
-        "light": -500.0          # Invalid: < 0
+                        "illuminance": -500.0          # Invalid: < 0
     })
     
     webhook = PlantHubWebhook(mock_hass, api_token, http_client=mock_client)
@@ -239,7 +239,7 @@ async def test_data_validation_ranges(mock_hass, api_token):
     assert result["soil_moisture"] == 150.0
     assert result["air_humidity"] == -10.0
     assert result["air_temperature"] == 150.0
-    assert result["light"] == -500.0
+    assert result["illuminance"] == -500.0
 
 
 @pytest.mark.asyncio

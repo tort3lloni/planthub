@@ -26,7 +26,7 @@ from .const import (
     MAX_AIR_HUMIDITY,
     MIN_AIR_TEMPERATURE,
     MAX_AIR_TEMPERATURE,
-    MIN_LIGHT,
+    MIN_ILLUMINANCE,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -242,7 +242,7 @@ class PlantHubWebhook:
                 "soil_moisture": self._extract_numeric_value(raw_data, "soil_moisture", "moisture"),
                 "air_temperature": self._extract_numeric_value(raw_data, "air_temperature", "temperature"),
                 "air_humidity": self._extract_numeric_value(raw_data, "air_humidity", "humidity"),
-                "light": self._extract_numeric_value(raw_data, "light", "illuminance"),
+                "illuminance": self._extract_numeric_value(raw_data, "light", "illuminance"),
                 "last_update": raw_data.get("last_updated", datetime.now().isoformat()),
             }
             
@@ -297,8 +297,8 @@ class PlantHubWebhook:
             MAX_AIR_TEMPERATURE
         )
         
-        if data.get("light") is not None and data["light"] < MIN_LIGHT:
-            _LOGGER.warning("Helligkeit negativ: %s", data["light"])
+        if data.get("illuminance") is not None and data["illuminance"] < MIN_ILLUMINANCE:
+            _LOGGER.warning("Helligkeit negativ: %s", data["illuminance"])
 
     def _validate_numeric_range(
         self, 
@@ -322,6 +322,6 @@ class PlantHubWebhook:
             "soil_moisture": None,
             "air_temperature": None,
             "air_humidity": None,
-            "light": None,
+            "illuminance": None,
             "last_update": datetime.now().isoformat(),
         }
