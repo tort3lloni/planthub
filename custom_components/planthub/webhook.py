@@ -134,6 +134,23 @@ class PlantHubWebhook:
             if self._http_client:
                 # Für Mock-Tests - POST mit Body
                 response = await self._http_client.post(url, json=request_body)
+                # Mock-Response verarbeiten
+                data = response.json() if hasattr(response, 'json') else response
+                _LOGGER.debug("Mock-API-Antwort für Pflanze %s: %s", plant_id, data)
+                
+                # Extrahiere das erste Element aus der Liste, falls es eine Liste ist
+                if isinstance(data, list) and len(data) > 0:
+                    plant_data = data[0]
+                    _LOGGER.debug("Extrahiertes Pflanzendaten aus Liste: %s", plant_data)
+                elif isinstance(data, dict):
+                    plant_data = data
+                    _LOGGER.debug("Pflanzendaten als Dictionary: %s", plant_data)
+                else:
+                    _LOGGER.error("Unerwartetes Datenformat: %s (Typ: %s)", data, type(data))
+                    raise PlantHubWebhookError(f"Unerwartetes Datenformat: {type(data)}")
+                
+                normalized_data = self._normalize_plant_data(plant_data, plant_id)
+                return normalized_data
             else:
                 # POST-Request mit plant_id im Body
                 async with self.session.post(url, json=request_body) as response:
@@ -148,7 +165,18 @@ class PlantHubWebhook:
                     data = await response.json()
                     _LOGGER.debug("API-Antwort für Pflanze %s: %s", plant_id, data)
                     
-                    normalized_data = self._normalize_plant_data(data, plant_id)
+                    # Extrahiere das erste Element aus der Liste, falls es eine Liste ist
+                    if isinstance(data, list) and len(data) > 0:
+                        plant_data = data[0]
+                        _LOGGER.debug("Extrahiertes Pflanzendaten aus Liste: %s", plant_data)
+                    elif isinstance(data, dict):
+                        plant_data = data
+                        _LOGGER.debug("Pflanzendaten als Dictionary: %s", plant_data)
+                    else:
+                        _LOGGER.error("Unerwartetes Datenformat: %s (Typ: %s)", data, type(data))
+                        raise PlantHubWebhookError(f"Unerwartetes Datenformat: {type(data)}")
+                    
+                    normalized_data = self._normalize_plant_data(plant_data, plant_id)
                     return normalized_data
                 
         except asyncio.TimeoutError:
