@@ -105,6 +105,18 @@ class PlantHubWebhook:
 
         url = f"{self._base_url}{WEBHOOK_ENDPOINT}/{plant_id}"
         
+        # Detailliertes Logging vor dem Request
+        _LOGGER.debug("=== PLANT HUB API REQUEST DEBUG ===")
+        _LOGGER.debug("Plant ID: %s", plant_id)
+        _LOGGER.debug("Base URL: %s", self._base_url)
+        _LOGGER.debug("Webhook Endpoint: %s", WEBHOOK_ENDPOINT)
+        _LOGGER.debug("Final URL: %s", url)
+        _LOGGER.debug("API Token: %s...", self.api_token[:10] + "..." if len(self.api_token) > 10 else "***")
+        _LOGGER.debug("Headers: %s", {k: v for k, v in self._headers.items() if k != "Authorization"})
+        _LOGGER.debug("Authorization: Bearer %s...", self.api_token[:10] + "..." if len(self.api_token) > 10 else "***")
+        _LOGGER.debug("Timeout: %d Sekunden", self._timeout)
+        _LOGGER.debug("==================================")
+        
         try:
             _LOGGER.debug("Rufe PlantHub API für Pflanze %s auf: %s", plant_id, url)
             
@@ -112,6 +124,13 @@ class PlantHubWebhook:
                 response = await self._http_client.get(url)
             else:
                 async with self.session.get(url) as response:
+                    # Response-Logging
+                    _LOGGER.debug("=== PLANT HUB API RESPONSE DEBUG ===")
+                    _LOGGER.debug("Plant ID: %s", plant_id)
+                    _LOGGER.debug("HTTP Status: %d", response.status)
+                    _LOGGER.debug("Response Headers: %s", dict(response.headers))
+                    _LOGGER.debug("=====================================")
+                    
                     await self._handle_response_status(response, plant_id)
                     data = await response.json()
                     _LOGGER.debug("API-Antwort für Pflanze %s: %s", plant_id, data)
@@ -120,15 +139,27 @@ class PlantHubWebhook:
                     return normalized_data
                 
         except asyncio.TimeoutError:
-            _LOGGER.error("Timeout beim API-Aufruf für Pflanze %s", plant_id)
-            raise PlantHubConnectionError(f"Timeout für Pflanze {plant_id}")
+            _LOGGER.error("=== PLANT HUB API TIMEOUT ERROR ===")
+            _LOGGER.error("Plant ID: %s", plant_id)
+            _LOGGER.error("URL: %s", url)
+            _LOGGER.error("Timeout nach %d Sekunden", self._timeout)
+            _LOGGER.error("=====================================")
+            raise PlantHubConnectionError(f"Timeout für Pflanze {plant_id} nach {self._timeout} Sekunden")
             
         except aiohttp.ClientError as e:
-            _LOGGER.error("Client-Fehler beim API-Aufruf für Pflanze %s: %s", plant_id, e)
+            _LOGGER.error("=== PLANT HUB API CLIENT ERROR ===")
+            _LOGGER.error("Plant ID: %s", plant_id)
+            _LOGGER.error("URL: %s", url)
+            _LOGGER.error("Client Error: %s", e)
+            _LOGGER.error("===================================")
             raise PlantHubConnectionError(f"Verbindungsfehler für Pflanze {plant_id}: {e}")
             
         except Exception as e:
-            _LOGGER.error("Unerwarteter Fehler beim API-Aufruf für Pflanze %s: %s", plant_id, e)
+            _LOGGER.error("=== PLANT HUB API UNEXPECTED ERROR ===")
+            _LOGGER.error("Plant ID: %s", plant_id)
+            _LOGGER.error("URL: %s", url)
+            _LOGGER.error("Unexpected Error: %s", e)
+            _LOGGER.error("======================================")
             raise PlantHubWebhookError(f"Unerwarteter Fehler für Pflanze {plant_id}: {e}")
 
     async def _handle_response_status(self, response: aiohttp.ClientResponse, context: str) -> None:
