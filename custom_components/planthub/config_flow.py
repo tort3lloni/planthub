@@ -58,9 +58,7 @@ class PlantHubConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                         vol.Optional("plant_name"): str,
                     }
                 ),
-                description_placeholders={
-                    "name": self._config_data["name"],
-                },
+                description_placeholders={},
             )
 
         # Füge die erste Pflanze zur Konfiguration hinzu

@@ -1,5 +1,29 @@
 # PlantHub Integration - Changelog
 
+## [1.1.5] - 2024-01-15
+
+### 🐛 **Bugfix: Config Flow Fehler behoben**
+
+#### **KeyError: 'name' behoben**
+- **Problem**: Config Flow warf KeyError beim ersten Schritt
+- **Ursache**: Referenz auf nicht existierenden `self._config_data["name"]`
+- **Lösung**: Entfernung der ungültigen Referenz aus `description_placeholders`
+- **Status**: ✅ Behoben
+
+#### **Stabiler Config Flow**
+- **Erster Schritt**: Funktioniert jetzt ohne Fehler
+- **Automatische Namensgebung**: Läuft korrekt durch
+- **Direkte Pflanzenverwaltung**: Funktioniert einwandfrei
+
+### 🔧 **Technische Verbesserungen**
+
+#### **Config Flow Optimierung**
+- **description_placeholders**: Leere Dictionary für ersten Schritt
+- **Fehlerbehandlung**: Robuste Behandlung aller Schritte
+- **Stabilität**: Config Flow läuft ohne Abstürze
+
+---
+
 ## [1.1.4] - 2024-01-15
 
 ### ✨ **Vollständige Home Assistant UI Integration**
