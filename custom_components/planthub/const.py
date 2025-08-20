@@ -11,8 +11,8 @@ DEFAULT_NAME: Final = "PlantHub"
 DEFAULT_SCAN_INTERVAL: Final = 300  # 5 Minuten
 
 # Webhook-Konfiguration
-WEBHOOK_BASE_URL: Final = "http://govegan.local:5678/webhook/v1/planthub"
-WEBHOOK_ENDPOINT: Final = ""
+WEBHOOK_BASE_URL: Final = "http://govegan.local:5678"
+WEBHOOK_ENDPOINT: Final = "/webhook/v1/planthub"
 WEBHOOK_TIMEOUT: Final = 30  # Sekunden
 
 # Status
