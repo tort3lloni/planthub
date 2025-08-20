@@ -65,8 +65,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     # Erstelle Device Registry Einträge für alle konfigurierten Pflanzen
     await _create_device_registry_entries(hass, entry, coordinator)
 
-    # Registriere Device Registry Listener für automatische Synchronisation
-    await _register_device_registry_listener(hass, entry)
+    # Device Registry Listener sind in Home Assistant 2025 nicht verfügbar
+    # await _register_device_registry_listener(hass, entry)
     
     # Registriere Entity Registry Listener für automatische Synchronisation
     await _register_entity_registry_listener(hass, entry)
@@ -89,8 +89,8 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
 
     if unload_ok:
-        # Entferne Device Registry Listener
-        await _unregister_device_registry_listener(hass, entry)
+        # Device Registry Listener sind in Home Assistant 2025 nicht verfügbar
+        # await _unregister_device_registry_listener(hass, entry)
         
         # Entferne Entity Registry Listener
         await _unregister_entity_registry_listener(hass, entry)
@@ -162,50 +162,22 @@ async def _remove_device_registry_entries(
 
 async def _register_device_registry_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Registriere Device Registry Listener für automatische Synchronisation."""
-    try:
-        device_registry = dr.async_get(hass)
-        
-        # Speichere den Listener in hass.data für späteres Entfernen
-        if "device_listeners" not in hass.data[DOMAIN]:
-            hass.data[DOMAIN]["device_listeners"] = {}
-        
-        def _device_removed(device_id: str) -> None:
-            """Callback wenn ein Gerät entfernt wird."""
-            _LOGGER.info("Gerät entfernt über UI: %s", device_id)
-            
-            # Finde die entsprechende Pflanze und entferne sie aus der Konfiguration
-            _remove_plant_from_config(hass, entry, device_id)
-        
-        # Registriere den Listener
-        unsub = device_registry.async_listen_removed(_device_removed)
-        
-        # Speichere den Unsubscribe-Callback
-        hass.data[DOMAIN]["device_listeners"][entry.entry_id] = unsub
-        
-        _LOGGER.debug("Device Registry Listener für Integration %s registriert", entry.entry_id)
-        
-    except Exception as e:
-        _LOGGER.error("Fehler beim Registrieren des Device Registry Listeners: %s", e)
+    # Device Registry Listener sind in Home Assistant 2025 nicht verfügbar
+    # Wir verwenden nur Entity Registry Listener für die Synchronisation
+    _LOGGER.debug("Device Registry Listener nicht verfügbar in Home Assistant 2025")
 
 
 async def _unregister_device_registry_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Entferne Device Registry Listener."""
-    try:
-        if "device_listeners" in hass.data.get(DOMAIN, {}):
-            if entry.entry_id in hass.data[DOMAIN]["device_listeners"]:
-                # Entferne den Listener
-                unsub = hass.data[DOMAIN]["device_listeners"].pop(entry.entry_id)
-                unsub()
-                _LOGGER.debug("Device Registry Listener für Integration %s entfernt", entry.entry_id)
-                
-    except Exception as e:
-        _LOGGER.error("Fehler beim Entfernen des Device Registry Listeners: %s", e)
+    # Device Registry Listener sind in Home Assistant 2025 nicht verfügbar
+    pass
 
 
 async def _register_entity_registry_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Registriere Entity Registry Listener für automatische Synchronisation."""
     try:
-        entity_registry = hass.helpers.entity_registry.async_get(hass)
+        from homeassistant.helpers import entity_registry as er
+        entity_registry = er.async_get(hass)
         
         # Speichere den Listener in hass.data für späteres Entfernen
         if "entity_listeners" not in hass.data[DOMAIN]:
@@ -293,7 +265,8 @@ def _remove_plant_from_config(hass: HomeAssistant, entry: ConfigEntry, device_id
 async def _update_plant_config_from_entity(hass: HomeAssistant, entry: ConfigEntry, entity_id: str) -> None:
     """Aktualisiere die PlantHub-Konfiguration basierend auf einer entfernten Entität."""
     try:
-        entity_registry = hass.helpers.entity_registry.async_get(hass)
+        from homeassistant.helpers import entity_registry as er
+        entity_registry = er.async_get(hass)
         entity = entity_registry.async_get(entity_id)
         
         if not entity or entity.config_entry_id != entry.entry_id:

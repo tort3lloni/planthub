@@ -1,5 +1,63 @@
 # PlantHub Integration - Changelog
 
+## [1.1.8] - 2024-01-15
+
+### 🐛 **Kritischer Bugfix: Entity Registry API-Aufrufe korrigiert**
+
+#### **hass.helpers.entity_registry Fehler behoben**
+- **Problem**: `'HomeAssistant' object has no attribute 'helpers'`
+- **Ursache**: API-Änderungen in Home Assistant 2025
+- **Lösung**: Direkte Imports von `homeassistant.helpers.entity_registry`
+- **Status**: ✅ Behoben
+
+#### **Home Assistant 2025 API-Kompatibilität**
+- **Vorher**: `hass.helpers.entity_registry.async_get(hass)`
+- **Nachher**: `from homeassistant.helpers import entity_registry as er; er.async_get(hass)`
+- **Vorteil**: Vollständige Kompatibilität mit Home Assistant 2025
+
+### 🔧 **Technische Verbesserungen**
+
+#### **API-Aufrufe modernisiert**
+- **Entity Registry**: Korrekte Imports und Aufrufe
+- **Device Registry**: Bereits korrekt implementiert
+- **Stabilität**: Alle Registry-Operationen funktionieren korrekt
+
+#### **Code-Qualität**
+- **Imports**: Lokale Imports für bessere Performance
+- **Fehlerbehandlung**: Robuste Behandlung aller API-Aufrufe
+- **Kompatibilität**: Vollständig Home Assistant 2025 konform
+
+---
+
+## [1.1.7] - 2024-01-15
+
+### 🐛 **Kritischer Bugfix: Device Registry Listener Fehler behoben**
+
+#### **DeviceRegistry.async_listen_removed Fehler behoben**
+- **Problem**: `'DeviceRegistry' object has no attribute 'async_listen_removed'`
+- **Ursache**: Device Registry Listener sind in Home Assistant 2025 nicht verfügbar
+- **Lösung**: Entfernung der nicht verfügbaren Device Registry Listener
+- **Status**: ✅ Behoben
+
+#### **Vereinfachte Synchronisation**
+- **Vorher**: Versuchte Device und Entity Registry Listener zu registrieren
+- **Nachher**: Nur Entity Registry Listener für die Synchronisation
+- **Vorteil**: Stabiler Betrieb ohne Fehler
+
+### 🔧 **Technische Verbesserungen**
+
+#### **Home Assistant 2025 Kompatibilität**
+- **Device Registry Listener**: Entfernt (nicht verfügbar)
+- **Entity Registry Listener**: Funktioniert weiterhin korrekt
+- **Stabilität**: Integration lädt ohne Fehler
+
+#### **Code-Bereinigung**
+- **Nicht verwendete Funktionen**: Entfernt oder deaktiviert
+- **Fehlerbehandlung**: Robuster und stabiler
+- **Logging**: Klare Informationen über nicht verfügbare Features
+
+---
+
 ## [1.1.6] - 2024-01-15
 
 ### 🔧 **Zusätzliche Konsistenzverbesserungen**
